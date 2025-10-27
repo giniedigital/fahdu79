@@ -1,4 +1,14 @@
 {
   "name": "Fahdu",
-  "displayName": "Fahdu"
+  "displayName": "Fahdu",
+  "plugins": [
+    "expo-video",
+    [
+      "expo-video",
+      {
+        "supportsBackgroundPlayback": true,
+        "supportsPictureInPicture": true
+      }
+    ]
+  ]
 }
