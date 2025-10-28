@@ -1,12 +1,13 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import Constants from 'expo-constants';
 
 const App = () => {
+  console.log('fuck');
   return (
-    <View>
+    <SafeAreaView>
       <Text>Hello</Text>
-    </View>
+    </SafeAreaView>
   );
 };
 
