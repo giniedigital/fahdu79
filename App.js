@@ -6,7 +6,7 @@ const App = () => {
   console.log('fuck');
   return (
     <SafeAreaView>
-      <Text>Hello</Text>
+      <Text>Hellox</Text>
     </SafeAreaView>
   );
 };
