@@ -2197,6 +2197,30 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNCMaskedView (0.3.2):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-hermes
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNDeviceInfo (14.1.1):
     - React-Core
   - RNFBApp (23.4.1):
@@ -2577,6 +2601,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNSnackbar (2.9.0):
+    - React-Core
   - RNSVG (15.14.0):
     - DoubleConversion
     - glog
@@ -2730,6 +2756,7 @@ DEPENDENCIES:
   - RNBootSplash (from `../node_modules/react-native-bootsplash`)
   - RNCallKeep (from `../node_modules/react-native-callkeep`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
@@ -2746,6 +2773,7 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNShare (from `../node_modules/react-native-share`)
+  - RNSnackbar (from `../node_modules/react-native-snackbar`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVoipPushNotification (from `../node_modules/react-native-voip-push-notification`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -2970,6 +2998,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-callkeep"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNCMaskedView:
+    :path: "../node_modules/@react-native-masked-view/masked-view"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
   RNFBApp:
@@ -3002,6 +3032,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNShare:
     :path: "../node_modules/react-native-share"
+  RNSnackbar:
+    :path: "../node_modules/react-native-snackbar"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   RNVoipPushNotification:
@@ -3128,6 +3160,7 @@ SPEC CHECKSUMS:
   RNBootSplash: 14d13977c625bc1e65e769f412bbbd4ccf7802a3
   RNCallKeep: 1930a01d8caf48f018be4f2db0c9f03405c2f977
   RNCAsyncStorage: c1dca434eda758348a549efb46822b4091d76804
+  RNCMaskedView: d72fac1c6517be910e8be1370ac324059bcbe677
   RNDeviceInfo: bcce8752b5043a623fe3c26789679b473f705d3c
   RNFBApp: 4d2d631b593081c39565f67403f90b188c0f22f7
   RNFBAuth: 467585d128b84d278579379fb84c25ac0075fb06
@@ -3144,6 +3177,7 @@ SPEC CHECKSUMS:
   RNReanimated: b5e5f252891b973a5d1497f08cdecba0b42db1f5
   RNScreens: e1459f3520b0e9a4f9ba6ee52fdb4a1f398be7d5
   RNShare: ab084f9d8263ca16975544e0977aa4808c4c0462
+  RNSnackbar: c1b235eb606b03938c693ce769ed3059c31dff9b
   RNSVG: ca807495c5219c05c747254200b89a4e3078db31
   RNVoipPushNotification: 4998fe6724d421da616dca765da7dc421ff54c4e
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
