@@ -3264,6 +3264,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-community/hooks@npm:^3.0.0":
+  version: 3.1.0
+  resolution: "@react-native-community/hooks@npm:3.1.0"
+  peerDependencies:
+    react: ">=17.0.2"
+    react-native: ">=0.65"
+  checksum: 10c0/937a1a0677796203839563b8086a96ff73b5171b16816bacac297695ac053253becfde33ea256c8e00998d1f0a3a7eff0185c1787a614ac1cecb10e7af156a69
+  languageName: node
+  linkType: hard
+
 "@react-native-community/netinfo@npm:^11.3.2":
   version: 11.4.1
   resolution: "@react-native-community/netinfo@npm:11.4.1"
@@ -3819,6 +3829,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sayem314/react-native-keep-awake@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "@sayem314/react-native-keep-awake@npm:1.3.1"
+  checksum: 10c0/f269adae3d7cafd214538ffc7b80f2344343c5ccbc1e0a93126322b46d110db15dd2f1d7048bc3e69108de44f165181c9a65f1738a821f360c507c6f247b3128
+  languageName: node
+  linkType: hard
+
 "@shopify/flash-list@npm:^1.7.1":
   version: 1.8.3
   resolution: "@shopify/flash-list@npm:1.8.3"
@@ -4330,6 +4347,7 @@ __metadata:
     "@react-native-community/cli": "npm:18.0.0"
     "@react-native-community/cli-platform-android": "npm:18.0.0"
     "@react-native-community/cli-platform-ios": "npm:18.0.0"
+    "@react-native-community/hooks": "npm:^3.0.0"
     "@react-native-community/netinfo": "npm:^11.3.2"
     "@react-native-documents/picker": "npm:^11.0.0"
     "@react-native-firebase/app": "npm:^23.4.1"
@@ -4347,6 +4365,7 @@ __metadata:
     "@react-navigation/native": "npm:^7.1.19"
     "@react-navigation/native-stack": "npm:^7.6.0"
     "@reduxjs/toolkit": "npm:^2.9.2"
+    "@sayem314/react-native-keep-awake": "npm:^1.3.1"
     "@shopify/flash-list": "npm:^1.7.1"
     "@types/jest": "npm:^29.5.13"
     "@types/react": "npm:^19.0.0"
@@ -4375,6 +4394,7 @@ __metadata:
     react-native-iap: "npm:^12.16.2"
     react-native-image-crop-picker: "npm:^0.51.1"
     react-native-image-picker: "npm:^8.2.1"
+    react-native-keyboard-aware-scroll-view: "npm:^0.9.5"
     react-native-linear-gradient: "npm:^2.8.3"
     react-native-mmkv: "npm:^4.0.0"
     react-native-modal: "npm:^13.0.1"
@@ -4385,12 +4405,15 @@ __metadata:
     react-native-purchases: "npm:^8.8.0"
     react-native-raw-bottom-sheet: "npm:^3.0.0"
     react-native-reanimated: "npm:^3.19.3"
+    react-native-responsive-dimensions: "npm:^3.1.1"
     react-native-safe-area-context: "npm:^5.6.1"
     react-native-screens: "npm:^4.18.0"
     react-native-share: "npm:^12.2.0"
     react-native-simple-dialogs: "npm:^2.1.0"
     react-native-snackbar: "npm:^2.6.2"
+    react-native-status-bar-height: "npm:^2.6.0"
     react-native-svg: "npm:^15.14.0"
+    react-native-uuid: "npm:^2.0.3"
     react-native-vector-icons: "npm:^10.3.0"
     react-native-voip-push-notification: "npm:^3.3.3"
     react-native-webview: "npm:^13.13.5"
@@ -10916,6 +10939,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-iphone-x-helper@npm:^1.0.3":
+  version: 1.3.1
+  resolution: "react-native-iphone-x-helper@npm:1.3.1"
+  peerDependencies:
+    react-native: ">=0.42.0"
+  checksum: 10c0/f2e01cb30ebdba54cbadc7bcb584ef7491c24aa2d221312f084c6e7b1031b77c2d538f7bf778ee16959245dbbe4f7784bbead02448368b7d0cbe8dd8c808693f
+  languageName: node
+  linkType: hard
+
 "react-native-is-edge-to-edge@npm:1.1.7":
   version: 1.1.7
   resolution: "react-native-is-edge-to-edge@npm:1.1.7"
@@ -10933,6 +10965,18 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10c0/87d20b900aded7d44c90afb946a7aa03c23a94ca3dd547bdddc2303b85357e4aab22567a57b19f1558d6c8be7058e3dcf34faa1e15182d1604f90974266d9a1d
+  languageName: node
+  linkType: hard
+
+"react-native-keyboard-aware-scroll-view@npm:^0.9.5":
+  version: 0.9.5
+  resolution: "react-native-keyboard-aware-scroll-view@npm:0.9.5"
+  dependencies:
+    prop-types: "npm:^15.6.2"
+    react-native-iphone-x-helper: "npm:^1.0.3"
+  peerDependencies:
+    react-native: ">=0.48.4"
+  checksum: 10c0/932c724f86ba355f1a1db938123eef67844550dd6e2d117222eff0012a47c6a293ad79c965e16930e5eb14adb58a5c340c00e03eeabbe3d78229236125b8a6aa
   languageName: node
   linkType: hard
 
@@ -11073,6 +11117,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-responsive-dimensions@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "react-native-responsive-dimensions@npm:3.1.1"
+  peerDependencies:
+    react-native: ">=0.44.1"
+  checksum: 10c0/8ed90dcb57a77dcf0029f96ff965532717d84f88e079b1219adbbf7773911c48ec31d50e9a16bb6a4b9f7722f6175a7e8faec2b5acddc14fd934975838b8cb34
+  languageName: node
+  linkType: hard
+
 "react-native-safe-area-context@npm:^5.6.1":
   version: 5.6.1
   resolution: "react-native-safe-area-context@npm:5.6.1"
@@ -11131,6 +11184,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-status-bar-height@npm:^2.6.0":
+  version: 2.6.0
+  resolution: "react-native-status-bar-height@npm:2.6.0"
+  checksum: 10c0/f663c10af48baebd571c8b5490693b3a25c56b1b1f7e3a64361d0a108da7aa2eb9b77a72eb65333b81ba6c6aaaed494b01fb2be9e9eeec0499e0f95afddcae6a
+  languageName: node
+  linkType: hard
+
 "react-native-svg@npm:^15.14.0":
   version: 15.14.0
   resolution: "react-native-svg@npm:15.14.0"
@@ -11155,6 +11215,13 @@ __metadata:
     react-native: "*"
     react-native-pager-view: ">= 6.0.0"
   checksum: 10c0/14f1f619cc656cb0e7b19108fb2421de9c613d7659ef978fe2f8081950a1756c8aa7b65b243c0047079ad3b6846f047e88f667d9e697819f131eef599c3275be
+  languageName: node
+  linkType: hard
+
+"react-native-uuid@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "react-native-uuid@npm:2.0.3"
+  checksum: 10c0/d94bccc28936c2dea081ab404f90b0c968092013af4d428b8e74bf407d6098ad5410914f77a903ad1296cce364fc85d27d8dfd70d22ec48d8cf1b7edc8803a8d
   languageName: node
   linkType: hard
 
