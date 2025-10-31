@@ -1,0 +1,133 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "Assets/fonts/Bouncy-Black-PERSONAL_USE_ONLY.otf",
+      "sha1": "f3e5cb7490aabd7e4de50022745269c11b15c2a1"
+    },
+    {
+      "path": "Assets/fonts/Bouncy-PERSONAL_USE_ONLY.otf",
+      "sha1": "e5abbbaf84ee41b77a62fe79c8055cff9e6ff49c"
+    },
+    {
+      "path": "Assets/fonts/FahduFont-Logo.ttf",
+      "sha1": "ab2cf87afa0b3956d7970cf6da77af112b6b608e"
+    },
+    {
+      "path": "Assets/fonts/Lexend-Black.ttf",
+      "sha1": "e7ce003e94ca32c8be251e4cd3ee6dd7dc3fae28"
+    },
+    {
+      "path": "Assets/fonts/Lexend-Bold.ttf",
+      "sha1": "1a8d4599190b5057c425db5709a40c7ef03b1202"
+    },
+    {
+      "path": "Assets/fonts/Lexend-Light.ttf",
+      "sha1": "e0feb7da42388b73b224d80aff81ccbcf03f4af1"
+    },
+    {
+      "path": "Assets/fonts/Lexend-Medium.ttf",
+      "sha1": "6fc08100245a310cae59f5265d8f40f6df11f0ef"
+    },
+    {
+      "path": "Assets/fonts/Lexend-Regular.ttf",
+      "sha1": "bc33fa22827ac530e6bf64d3b6f412067f200d6f"
+    },
+    {
+      "path": "Assets/fonts/Lexend.ttf",
+      "sha1": "93d820996bfbbe9de065e16ed2f4588db7f0f51a"
+    },
+    {
+      "path": "Assets/fonts/MabryPro-Bold.ttf",
+      "sha1": "a5bd5c9726a6f1940dc889e51dc28e90923e961d"
+    },
+    {
+      "path": "Assets/fonts/MabryPro-Italic.ttf",
+      "sha1": "2dee79f990d69bae167ee8f7d7c5d6f929e6362b"
+    },
+    {
+      "path": "Assets/fonts/MabryPro-LightItalic.ttf",
+      "sha1": "cbe44c0a303078112676ff04e046f2a817e3e52c"
+    },
+    {
+      "path": "Assets/fonts/MabryPro-Medium.ttf",
+      "sha1": "1c2eeb83c8d743d157dbcdb83e2ae02f0e80e104"
+    },
+    {
+      "path": "Assets/fonts/MabryPro-MediumItalic.ttf",
+      "sha1": "2f9b44f2348f523c872cb7af4f70d4d8ed7a6a5e"
+    },
+    {
+      "path": "Assets/fonts/MabryPro-Regular.ttf",
+      "sha1": "a15d4ae85ed46428267528544444a8622cc6a566"
+    },
+    {
+      "path": "Assets/fonts/Rubik-Black.ttf",
+      "sha1": "1d564ff40c2506b66fbae8983674fcc6f50332cf"
+    },
+    {
+      "path": "Assets/fonts/Rubik-BlackItalic.ttf",
+      "sha1": "033e3229f6548d4b9241406f8613217811d1c484"
+    },
+    {
+      "path": "Assets/fonts/Rubik-Bold.ttf",
+      "sha1": "0b3d2153576f8ec576af1c89e4793a3dcf0ebb0c"
+    },
+    {
+      "path": "Assets/fonts/Rubik-BoldItalic.ttf",
+      "sha1": "6e13f686165a725698733d40cdc08beaefc60860"
+    },
+    {
+      "path": "Assets/fonts/Rubik-ExtraBold.ttf",
+      "sha1": "1647fe9245b610f1b5ac101a3234cc3d8f6051b9"
+    },
+    {
+      "path": "Assets/fonts/Rubik-ExtraBoldItalic.ttf",
+      "sha1": "82b102196902ef73a92db1aa1da90b16c953841a"
+    },
+    {
+      "path": "Assets/fonts/Rubik-Italic-VariableFont_wght.ttf",
+      "sha1": "90ca1b88e059422427a59b46d52877d66d6fdc81"
+    },
+    {
+      "path": "Assets/fonts/Rubik-Italic.ttf",
+      "sha1": "ddba45e218ec4a1bdff496fcfef9932fa30c82c0"
+    },
+    {
+      "path": "Assets/fonts/Rubik-Light.ttf",
+      "sha1": "2bc14068c355425f472f6a97b69c5c468bc863a3"
+    },
+    {
+      "path": "Assets/fonts/Rubik-LightItalic.ttf",
+      "sha1": "a3c49755eadf8edf5b479591720d234feb9caaf0"
+    },
+    {
+      "path": "Assets/fonts/Rubik-Medium.ttf",
+      "sha1": "7b93e52dc59bc6eb3b374b860c203cbe726c3c31"
+    },
+    {
+      "path": "Assets/fonts/Rubik-MediumItalic.ttf",
+      "sha1": "1eb6e92dea262c4509cbfb66b8638be630dc639f"
+    },
+    {
+      "path": "Assets/fonts/Rubik-Regular.ttf",
+      "sha1": "9d7091d63f35c9d28518b06566442a02b306980a"
+    },
+    {
+      "path": "Assets/fonts/Rubik-SemiBold.ttf",
+      "sha1": "01a4b4fee8dbf9802ccb6256fdf53b3a86f2fcec"
+    },
+    {
+      "path": "Assets/fonts/Rubik-SemiBoldItalic.ttf",
+      "sha1": "d5b3099c28cf63567f3d9eac452fd02fb3721f02"
+    },
+    {
+      "path": "Assets/fonts/Rubik-VariableFont_wght.ttf",
+      "sha1": "80fbecd6d6cb21096b3e0277222e696c77ceb7eb"
+    },
+    {
+      "path": "Assets/fonts/SIL Open Font License.txt",
+      "sha1": "473ac794024c6c5b086f270abe8dbb15787afd14"
+    }
+  ]
+}
