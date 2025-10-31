@@ -4574,6 +4574,7 @@ __metadata:
     expo-image: "npm:^3.0.10"
     expo-status-bar: "npm:^3.0.8"
     expo-video: "npm:~2.2.2"
+    ffmpeg-kit-react-native: /Users/giniedigital/ltsfahdu/Fahdu/FFMPegBuild/react-native
     jest: "npm:^29.6.3"
     lottie-react-native: "npm:^7.3.4"
     prettier: "npm:2.8.8"
@@ -7383,6 +7384,16 @@ __metadata:
     picomatch:
       optional: true
   checksum: 10c0/e345083c4306b3aed6cb8ec551e26c36bab5c511e99ea4576a16750ddc8d3240e63826cc624f5ae17ad4dc82e68a253213b60d556c11bfad064b7607847ed07f
+  languageName: node
+  linkType: hard
+
+"ffmpeg-kit-react-native@file:/Users/giniedigital/ltsfahdu/Fahdu/FFMPegBuild/react-native::locator=Fahdu%40workspace%3A.":
+  version: 6.0.2
+  resolution: "ffmpeg-kit-react-native@file:/Users/giniedigital/ltsfahdu/Fahdu/FFMPegBuild/react-native#/Users/giniedigital/ltsfahdu/Fahdu/FFMPegBuild/react-native::hash=a401ee&locator=Fahdu%40workspace%3A."
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/cfbfb29b9abd9da8d7d21f64a5932734d105683e11563382dfcf51cda6689458e97e823b67a0926728771e26d7584de572ab627f66c37de892aee7ef195c8384
   languageName: node
   linkType: hard
 
