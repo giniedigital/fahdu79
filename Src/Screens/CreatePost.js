@@ -1,29 +1,76 @@
-import {StyleSheet, Text, View, Image, TextInput, TouchableOpacity, Switch, Pressable, ActivityIndicator, ScrollView, Platform, InputAccessoryView, Keyboard, Alert} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TextInput,
+  TouchableOpacity,
+  Switch,
+  Pressable,
+  ActivityIndicator,
+  ScrollView,
+  Platform,
+  InputAccessoryView,
+  Keyboard,
+  Alert,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {responsiveFontSize, responsiveWidth} from 'react-native-responsive-dimensions';
+import {
+  responsiveFontSize,
+  responsiveWidth,
+} from 'react-native-responsive-dimensions';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {useNavigation} from '@react-navigation/native';
 import DateTimePickerSheet from '../Components/CreatePostComponents/DateTimePickerSheet';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux';
 import {toggleDateTimePicker} from '../../Redux/Slices/NormalSlices/HideShowSlice';
-import {useCreatePostMutation, useCreatePostUploadAttachmentMutation, useLazyMyPostListQuery} from '../../Redux/Slices/QuerySlices/chatWindowAttachmentSliceApi';
-import {generateBase64Image, generateVideoThumbnail, getImageSize, getVideoMetadata, videoReducer} from '../../FFMPeg/FFMPegModule';
+import {
+  useCreatePostMutation,
+  useCreatePostUploadAttachmentMutation,
+  useLazyMyPostListQuery,
+} from '../../Redux/Slices/QuerySlices/chatWindowAttachmentSliceApi';
+import {
+  generateBase64Image,
+  generateVideoThumbnail,
+  getImageSize,
+  getVideoMetadata,
+  videoReducer,
+} from '../../FFMPeg/FFMPegModule';
 import {LoginPageErrors, successSnacks} from '../Components/ErrorSnacks';
 import DIcon from '../../DesiginData/DIcons';
-import {dismissProgressNotification, displayNotificationProgressIndicator} from '../../Notificaton';
+import {
+  dismissProgressNotification,
+  displayNotificationProgressIndicator,
+} from '../../Notificaton';
 import {autoLogout} from '../../AutoLogout';
 import {FONT_SIZES, padios, WIDTH_SIZES} from '../../DesiginData/Utility';
-import {PERMISSIONS, RESULTS, checkMultiple, request} from 'react-native-permissions';
+import {
+  PERMISSIONS,
+  RESULTS,
+  checkMultiple,
+  request,
+} from 'react-native-permissions';
 import ImageCropPicker from 'react-native-image-crop-picker';
-import {addNewPostToMyProfileCache, setFeedCacheMyPost} from '../../Redux/Slices/NormalSlices/Posts/MyProfileFeedCacheSlice';
+import {
+  addNewPostToMyProfileCache,
+  setFeedCacheMyPost,
+} from '../../Redux/Slices/NormalSlices/Posts/MyProfileFeedCacheSlice';
 import Upload from '../../Assets/svg/uploadP.svg';
 import {check} from 'react-native-permissions';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import Ionicons
 import AnimatedButton from '../Components/AnimatedButton';
 import RNFS from 'react-native-fs';
-import DocumentPicker, {types} from 'react-native-document-picker';
-import {resetUploadProgress, setPostIndex, setUploadProgress, startProcessing, startUpload} from '../../Redux/Slices/NormalSlices/UploadSlice';
+
+import {pick, types, isCancel} from '@react-native-documents/picker';
+
+import {
+  resetUploadProgress,
+  setPostIndex,
+  setUploadProgress,
+  startProcessing,
+  startUpload,
+} from '../../Redux/Slices/NormalSlices/UploadSlice';
 import {navigate} from '../../Navigation/RootNavigation';
 
 const CreatePost = ({route}) => {
@@ -49,9 +96,12 @@ const CreatePost = ({route}) => {
 
   // const [uploadAttachment, {error}] = useUploadAttachmentMutation();
 
-  const [createPostUploadAttachment, {isLoading}] = useCreatePostUploadAttachmentMutation();
+  const [createPostUploadAttachment, {isLoading}] =
+    useCreatePostUploadAttachmentMutation();
 
-  const {postIndex, isUploading, processing, progress} = useSelector(state => state.upload);
+  const {postIndex, isUploading, processing, progress} = useSelector(
+    state => state.upload,
+  );
 
   const navigation = useNavigation();
 
@@ -81,7 +131,9 @@ const CreatePost = ({route}) => {
 
   const [postList] = useLazyMyPostListQuery();
 
-  const getPostContent = useSelector(state => state.myProfileFeedCache.data.content);
+  const getPostContent = useSelector(
+    state => state.myProfileFeedCache.data.content,
+  );
 
   console.log({getPostContent});
 
@@ -148,8 +200,13 @@ const CreatePost = ({route}) => {
         };
       } else {
         // --- Use Document Picker for Android ---
-        mediaInfo = await DocumentPicker.pickSingle({
+        // mediaInfo = await DocumentPicker.pickSingle({
+        //   type: [types.images, types.video],
+        // });
+
+        mediaInfo = await pick({
           type: [types.images, types.video],
+          multiple: false,
         });
       }
 
@@ -173,10 +230,15 @@ const CreatePost = ({route}) => {
         navigation.navigate('cropViewScreen', {uri: mediaInfo.uri});
       } else if (mediaInfo.type?.startsWith('video/')) {
         console.log('Video selected:', mediaInfo.uri);
-        const destinationPath = `${RNFS.CachesDirectoryPath}/${Date.now()}_${mediaInfo.name}`;
+        const destinationPath = `${RNFS.CachesDirectoryPath}/${Date.now()}_${
+          mediaInfo.name
+        }`;
 
         // Copy file to a stable cache location
-        await RNFS.copyFile(mediaInfo.uri.replace('file://', ''), destinationPath);
+        await RNFS.copyFile(
+          mediaInfo.uri.replace('file://', ''),
+          destinationPath,
+        );
         console.log('Video copied to:', destinationPath);
 
         const meta = await getVideoMetadata(destinationPath);
@@ -198,12 +260,20 @@ const CreatePost = ({route}) => {
         setLoading(false);
       }
     } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
+      // if (DocumentPicker.isCancel(err)) {
+      //   console.log('User cancelled the document picker.');
+      // } else {
+      //   console.error('Error selecting media:', err);
+      //   LoginPageErrors('An unexpected error occurred.');
+      // }
+
+      if (isCancel(err)) {
         console.log('User cancelled the document picker.');
       } else {
         console.error('Error selecting media:', err);
         LoginPageErrors('An unexpected error occurred.');
       }
+
       setLoading(false);
     }
   };
@@ -253,12 +323,17 @@ const CreatePost = ({route}) => {
         pinned: true,
       }));
 
-      let combinedPinnedUnPinnedPosts = [...pinnedPost, ...postData?.data?.posts];
+      let combinedPinnedUnPinnedPosts = [
+        ...pinnedPost,
+        ...postData?.data?.posts,
+      ];
 
       dispatch(setFeedCacheMyPost({data: combinedPinnedUnPinnedPosts}));
 
       // just get the index
-      const firstNonPinnedIndex = getFirstNonPinnedIndex(combinedPinnedUnPinnedPosts);
+      const firstNonPinnedIndex = getFirstNonPinnedIndex(
+        combinedPinnedUnPinnedPosts,
+      );
       console.log('First non-pinned index:', firstNonPinnedIndex);
       dispatch(setPostIndex(firstNonPinnedIndex));
     }
@@ -299,7 +374,9 @@ const CreatePost = ({route}) => {
 
         videoFormatter(videoUrl).then(async compressedVideoUrl => {
           if (compressedVideoUrl) {
-            let compressedVideoThumbnail = await generateVideoThumbnail(compressedVideoUrl);
+            let compressedVideoThumbnail = await generateVideoThumbnail(
+              compressedVideoUrl,
+            );
 
             const formData = new FormData();
 
@@ -395,7 +472,9 @@ const CreatePost = ({route}) => {
                                 dispatch(resetUploadProgress());
 
                                 if (e?.data?.statusCode) {
-                                  successSnacks('Created your post successfully.');
+                                  successSnacks(
+                                    'Created your post successfully.',
+                                  );
 
                                   // console.log(":::::::::::SUBSSTHECREATEDPOST:::::::::::::::", e?.data, "::::::::::::::::::::::::THECREATEDPOST::::::::::::::::::::::");
 
@@ -421,7 +500,9 @@ const CreatePost = ({route}) => {
                               dispatch(resetUploadProgress());
 
                               if (e?.data?.statusCode) {
-                                successSnacks('Created your post successfully.');
+                                successSnacks(
+                                  'Created your post successfully.',
+                                );
 
                                 // console.log(":::::::::::SUBSSTHECREATEDPOST:::::::::::::::", e?.data, "::::::::::::::::::::::::THECREATEDPOST::::::::::::::::::::::");
 
@@ -467,7 +548,9 @@ const CreatePost = ({route}) => {
           .then(stat => {
             console.log(`File size: ${stat.size} bytes`);
             console.log(`File size: ${(stat.size / 1024).toFixed(2)} KB`);
-            console.log(`File size: ${(stat.size / (1024 * 1024)).toFixed(2)} MB`);
+            console.log(
+              `File size: ${(stat.size / (1024 * 1024)).toFixed(2)} MB`,
+            );
           })
           .catch(error => {
             console.error('Error getting file size:', error);
@@ -570,7 +653,9 @@ const CreatePost = ({route}) => {
 
                       if (e?.data?.statusCode === 200) {
                         successSnacks('Created your post successfully.');
-                        dispatch(addNewPostToMyProfileCache({newPost: e?.data?.data}));
+                        dispatch(
+                          addNewPostToMyProfileCache({newPost: e?.data?.data}),
+                        );
 
                         // console.log(":::::::::::IMAGECREATEPOST:::::::::::::::", e?.data?.data, "::::::::::::::::::::::::THECREATEDPOST::::::::::::::::::::::");
 
@@ -600,17 +685,58 @@ const CreatePost = ({route}) => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: 50}}>
-        <View style={{borderWidth: responsiveWidth(0.5), borderRadius: responsiveWidth(3.73), width: responsiveWidth(92)}}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{paddingBottom: 50}}>
+        <View
+          style={{
+            borderWidth: responsiveWidth(0.5),
+            borderRadius: responsiveWidth(3.73),
+            width: responsiveWidth(92),
+          }}>
           <View style={styles.FollowersSubScribersToggle}>
-            <TouchableOpacity onPress={() => setForSubscribers(!forSubscribers)} style={[styles.Followers, forSubscribers === false ? {backgroundColor: '#FFA86B', borderWidth: responsiveWidth(0.3), borderRadius: responsiveWidth(2.5)} : null]}>
-              <Text style={{fontFamily: 'Rubik-SemiBold', fontSize: FONT_SIZES[14], color: '#282828'}} key={'1Followers'}>
+            <TouchableOpacity
+              onPress={() => setForSubscribers(!forSubscribers)}
+              style={[
+                styles.Followers,
+                forSubscribers === false
+                  ? {
+                      backgroundColor: '#FFA86B',
+                      borderWidth: responsiveWidth(0.3),
+                      borderRadius: responsiveWidth(2.5),
+                    }
+                  : null,
+              ]}>
+              <Text
+                style={{
+                  fontFamily: 'Rubik-SemiBold',
+                  fontSize: FONT_SIZES[14],
+                  color: '#282828',
+                }}
+                key={'1Followers'}>
                 Followers
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => setForSubscribers(!forSubscribers)} style={[styles.SubScribers, forSubscribers === true ? {backgroundColor: '#FFA86B', borderWidth: responsiveWidth(0.3), borderRadius: responsiveWidth(2.5)} : null]}>
-              <Text key={'2SubScribers'} style={{fontFamily: 'Rubik-SemiBold', fontSize: FONT_SIZES[14], color: '#282828'}}>
+            <TouchableOpacity
+              onPress={() => setForSubscribers(!forSubscribers)}
+              style={[
+                styles.SubScribers,
+                forSubscribers === true
+                  ? {
+                      backgroundColor: '#FFA86B',
+                      borderWidth: responsiveWidth(0.3),
+                      borderRadius: responsiveWidth(2.5),
+                    }
+                  : null,
+              ]}>
+              <Text
+                key={'2SubScribers'}
+                style={{
+                  fontFamily: 'Rubik-SemiBold',
+                  fontSize: FONT_SIZES[14],
+                  color: '#282828',
+                }}>
                 Subscribers
               </Text>
             </TouchableOpacity>
@@ -619,27 +745,85 @@ const CreatePost = ({route}) => {
 
         <View style={styles.textInputContainer}>
           {mediaUri ? (
-            <View style={[styles.selectImageBox, route?.params && {flexDirection: 'row', alignItems: 'center'}, !isMediaVideo ? {aspectRatio: `${route?.params?.width}/${route?.params?.height}`} : {aspectRatio: '16/9'}]}>
+            <View
+              style={[
+                styles.selectImageBox,
+                route?.params && {flexDirection: 'row', alignItems: 'center'},
+                !isMediaVideo
+                  ? {
+                      aspectRatio: `${route?.params?.width}/${route?.params?.height}`,
+                    }
+                  : {aspectRatio: '16/9'},
+              ]}>
               <View style={styles.imageContainer}>
-                <Image source={{uri: `file://${mediaUri}`}} resizeMethod="resize" resizeMode="contain" style={{height: '100%', width: '100%', resizeMode: 'cover'}} />
-                <TouchableOpacity onPress={selectMedia} style={styles.selectMedia}>
-                  <Image source={require('../../Assets/Images/ChangeProfile.png')} style={{height: responsiveWidth(8), width: responsiveWidth(8), resizeMode: 'contain', zIndex: 8, alignSelf: 'center', marginRight: responsiveWidth(1)}} />
+                <Image
+                  source={{uri: `file://${mediaUri}`}}
+                  resizeMethod="resize"
+                  resizeMode="contain"
+                  style={{height: '100%', width: '100%', resizeMode: 'cover'}}
+                />
+                <TouchableOpacity
+                  onPress={selectMedia}
+                  style={styles.selectMedia}>
+                  <Image
+                    source={require('../../Assets/Images/ChangeProfile.png')}
+                    style={{
+                      height: responsiveWidth(8),
+                      width: responsiveWidth(8),
+                      resizeMode: 'contain',
+                      zIndex: 8,
+                      alignSelf: 'center',
+                      marginRight: responsiveWidth(1),
+                    }}
+                  />
                 </TouchableOpacity>
               </View>
 
               {isMediaVideo && (
-                <TouchableOpacity style={{flexDirection: 'row', alignItems: 'center', gap: responsiveWidth(1), marginTop: responsiveWidth(2), position: 'absolute', alignSelf: 'center'}} onPress={() => openVideoPreview()}>
-                  <DIcon name={'play-circle'} provider={'FontAwesome5'} color="#fff" size={WIDTH_SIZES['36']} />
+                <TouchableOpacity
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    gap: responsiveWidth(1),
+                    marginTop: responsiveWidth(2),
+                    position: 'absolute',
+                    alignSelf: 'center',
+                  }}
+                  onPress={() => openVideoPreview()}>
+                  <DIcon
+                    name={'play-circle'}
+                    provider={'FontAwesome5'}
+                    color="#fff"
+                    size={WIDTH_SIZES['36']}
+                  />
                 </TouchableOpacity>
               )}
             </View>
           ) : (
-            <TouchableOpacity style={styles.selectImageBox} onPress={selectMedia}>
-              <View style={[styles.imageContainer, {marginVertical: WIDTH_SIZES['10'], marginTop: WIDTH_SIZES['84']}]}>
+            <TouchableOpacity
+              style={styles.selectImageBox}
+              onPress={selectMedia}>
+              <View
+                style={[
+                  styles.imageContainer,
+                  {
+                    marginVertical: WIDTH_SIZES['10'],
+                    marginTop: WIDTH_SIZES['84'],
+                  },
+                ]}>
                 {/* <Image source={require("../../Assets/Images/selectMedia.png")} resizeMethod="resize" resizeMode="contain" style={{ width: "100%" }} /> */}
                 <Upload />
               </View>
-              <Text style={{fontFamily: 'Rubik-Medium', textAlign: 'center', color: '#282828', fontSize: 14, marginBottom: 80}}>Click to upload your files </Text>
+              <Text
+                style={{
+                  fontFamily: 'Rubik-Medium',
+                  textAlign: 'center',
+                  color: '#282828',
+                  fontSize: 14,
+                  marginBottom: 80,
+                }}>
+                Click to upload your files{' '}
+              </Text>
             </TouchableOpacity>
           )}
 
@@ -659,7 +843,9 @@ const CreatePost = ({route}) => {
 
           {Platform.OS === 'ios' && (
             <InputAccessoryView nativeID={inputAccessoryViewID}>
-              <Pressable onPress={() => Keyboard.dismiss()} style={{alignSelf: 'center', borderRadius: responsiveWidth(2)}}>
+              <Pressable
+                onPress={() => Keyboard.dismiss()}
+                style={{alignSelf: 'center', borderRadius: responsiveWidth(2)}}>
                 <Text
                   style={{
                     textAlign: 'center',
@@ -676,26 +862,82 @@ const CreatePost = ({route}) => {
         </View>
 
         {isEnabled && (
-          <View style={[styles.errorContainer, isEnabled ? {marginVertical: WIDTH_SIZES['24'] + WIDTH_SIZES['2']} : null]}>
-            <Ionicons name="time-outline" size={20} color="green" style={styles.errorIconOld} />
+          <View
+            style={[
+              styles.errorContainer,
+              isEnabled
+                ? {marginVertical: WIDTH_SIZES['24'] + WIDTH_SIZES['2']}
+                : null,
+            ]}>
+            <Ionicons
+              name="time-outline"
+              size={20}
+              color="green"
+              style={styles.errorIconOld}
+            />
 
             <Text style={styles.errorText}>
-              Scheduled for {date.toLocaleDateString(undefined, {day: 'numeric', month: 'short', year: 'numeric'})} at {date.toLocaleTimeString(undefined, {hour: '2-digit', minute: '2-digit'})}
+              Scheduled for{' '}
+              {date.toLocaleDateString(undefined, {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })}{' '}
+              at{' '}
+              {date.toLocaleTimeString(undefined, {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}
             </Text>
 
-            <DIcon onPress={toggleSwitch} provider={'MaterialIcons'} name={'delete-outline'} size={20} color="#1e1e1e" style={styles.errorIcon} />
+            <DIcon
+              onPress={toggleSwitch}
+              provider={'MaterialIcons'}
+              name={'delete-outline'}
+              size={20}
+              color="#1e1e1e"
+              style={styles.errorIcon}
+            />
           </View>
         )}
 
         {!isEnabled && (
-          <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, marginTop: WIDTH_SIZES['24']}}>
-            <Text style={{fontFamily: 'Rubik-SemiBold', color: '#282828', fontSize: 16, left: responsiveWidth(1.5)}}>Schedule this Post</Text>
-            <Switch trackColor={{false: '#767577', true: '#1e1e1e'}} thumbColor={isEnabled ? '#ffa86b' : '#1e1e1e'} ios_backgroundColor="white" onValueChange={toggleSwitch} value={isEnabled} style={{borderWidth: 1.5, borderColor: '#1e1e1e'}} />
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 20,
+              marginTop: WIDTH_SIZES['24'],
+            }}>
+            <Text
+              style={{
+                fontFamily: 'Rubik-SemiBold',
+                color: '#282828',
+                fontSize: 16,
+                left: responsiveWidth(1.5),
+              }}>
+              Schedule this Post
+            </Text>
+            <Switch
+              trackColor={{false: '#767577', true: '#1e1e1e'}}
+              thumbColor={isEnabled ? '#ffa86b' : '#1e1e1e'}
+              ios_backgroundColor="white"
+              onValueChange={toggleSwitch}
+              value={isEnabled}
+              style={{borderWidth: 1.5, borderColor: '#1e1e1e'}}
+            />
           </View>
         )}
 
         <View style={{width: '99%', justifyContent: 'center'}}>
-          <AnimatedButton title={'Post'} buttonMargin={0} loading={loading} onPress={() => handleSendPost()} disabled={!mediaSelected} />
+          <AnimatedButton
+            title={'Post'}
+            buttonMargin={0}
+            loading={loading}
+            onPress={() => handleSendPost()}
+            disabled={!mediaSelected}
+          />
         </View>
 
         {isEnabled && <DateTimePickerSheet date={date} setDate={setDate} />}

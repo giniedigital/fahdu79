@@ -1,17 +1,49 @@
-import {StyleSheet, Text, View, TouchableOpacity, FlatList, StatusBar, Button, Vibration, Linking, ToastAndroid, PermissionsAndroid, AppState, Platform, ActivityIndicator, Alert, BackHandler} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+  StatusBar,
+  Button,
+  Vibration,
+  Linking,
+  ToastAndroid,
+  PermissionsAndroid,
+  AppState,
+  Platform,
+  ActivityIndicator,
+  Alert,
+  BackHandler,
+} from 'react-native';
 import {useLayoutEffect, useRef} from 'react';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import ChatRoomAudienceSort from '../Components/ChatRoomAudienceSort';
-import {responsiveFontSize, responsiveHeight, responsiveWidth} from 'react-native-responsive-dimensions';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+  responsiveWidth,
+} from 'react-native-responsive-dimensions';
 import DIcon from '../../DesiginData/DIcons';
 
 import {useSelector, useDispatch} from 'react-redux';
 
-import {useGetRoomListQuery, useLazyGetRoomListQuery} from '../../Redux/Slices/QuerySlices/roomListSliceApi';
+import {
+  useGetRoomListQuery,
+  useLazyGetRoomListQuery,
+} from '../../Redux/Slices/QuerySlices/roomListSliceApi';
 
-import {deleteFirst, removeRoomList, setCacheByFilter} from '../../Redux/Slices/NormalSlices/RoomListSlice';
+import {
+  deleteFirst,
+  removeRoomList,
+  setCacheByFilter,
+} from '../../Redux/Slices/NormalSlices/RoomListSlice';
 
-import {audienceFilterMap, chatRoomSortMap, WIDTH_SIZES} from '../../DesiginData/Utility';
+import {
+  audienceFilterMap,
+  chatRoomSortMap,
+  WIDTH_SIZES,
+} from '../../DesiginData/Utility';
 
 // import ChatRoomSortModal from '../Components/ChatRoomSortModal';
 
@@ -28,10 +60,16 @@ import {userIdCreateSelector} from '../../Redux/Slices/NormalSlices/AuthSlice';
 import LinearGradient from 'react-native-linear-gradient';
 
 import {resetCurrentChattingRoom} from '../../Redux/Slices/NormalSlices/MessageSlices/ChatWindowCurrentChattingRoom';
-import {resetAllModal, setPostsCardType, toggleFloatingViews, toggleHideShowInformationModal, toggleShowChatRoomSelector} from '../../Redux/Slices/NormalSlices/HideShowSlice';
+import {
+  resetAllModal,
+  setPostsCardType,
+  toggleFloatingViews,
+  toggleHideShowInformationModal,
+  toggleShowChatRoomSelector,
+} from '../../Redux/Slices/NormalSlices/HideShowSlice';
 
 import {autoLogout} from '../../AutoLogout';
-import dynamicLinks from '@react-native-firebase/dynamic-links';
+
 import SwitcherSheet from '../Components/HomeComponents/SwitcherSheet';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {navigate} from '../../Navigation/RootNavigation';
@@ -77,13 +115,19 @@ const ChatRoom = () => {
 
   const token = useSelector(state => state.auth.user.token);
 
-  const selectedAudinceForFilter = useSelector(state => state.filterBy.selected.audience);
+  const selectedAudinceForFilter = useSelector(
+    state => state.filterBy.selected.audience,
+  );
 
   const currentUserId = useSelector(state => state.auth.user.currentUserId);
 
-  const selectedSortForFilter = useSelector(state => state.sortBy.selected.sort);
+  const selectedSortForFilter = useSelector(
+    state => state.sortBy.selected.sort,
+  );
 
-  const searchString = useSelector(state => state.chatRoomSearchValue.data.searchString);
+  const searchString = useSelector(
+    state => state.chatRoomSearchValue.data.searchString,
+  );
 
   const [getRoomList] = useLazyGetRoomListQuery();
 
@@ -91,7 +135,9 @@ const ChatRoom = () => {
 
   const [isOnlineFilterEnabled, setIsOnlineFilterEnabled] = useState(false);
 
-  const showSelectorCheckBox = useSelector(state => state.hideShow.visibility.showChatRoomSelector);
+  const showSelectorCheckBox = useSelector(
+    state => state.hideShow.visibility.showChatRoomSelector,
+  );
 
   const [isOnline, setIsOnline] = useState(false);
 
@@ -113,7 +159,9 @@ const ChatRoom = () => {
 
   console.log(target.label, '???');
 
-  const visibility = useSelector(state => state.hideShow.visibility.floatingViews);
+  const visibility = useSelector(
+    state => state.hideShow.visibility.floatingViews,
+  );
 
   const lable = useSelector(state => state.sortBy.selected.label);
 
@@ -121,7 +169,9 @@ const ChatRoom = () => {
 
   let getNotificationPermission = useCallback(async () => {
     if (Platform.Version >= 33) {
-      let x = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+      let x = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      );
 
       if (x === 'granted') {
         setNotificationAccess(true);
@@ -159,7 +209,10 @@ const ChatRoom = () => {
   };
 
   useEffect(() => {
-    const subscription = AppState.addEventListener('change', handlerAppStateChange);
+    const subscription = AppState.addEventListener(
+      'change',
+      handlerAppStateChange,
+    );
 
     return () => {
       subscription.remove();
@@ -178,9 +231,13 @@ const ChatRoom = () => {
    * @See_in_cache_if_there_is_data_already_present
    * */
 
-  let dataFromCache = useSelector(state => state.roomList.data[audienceFilterMap[selectedAudinceForFilter]]);
+  let dataFromCache = useSelector(
+    state => state.roomList.data[audienceFilterMap[selectedAudinceForFilter]],
+  );
 
-  let arrayOfunReadThreadIds = useSelector(state => state?.unReadThread?.unReadRoomIdArr);
+  let arrayOfunReadThreadIds = useSelector(
+    state => state?.unReadThread?.unReadRoomIdArr,
+  );
 
   console.log(arrayOfunReadThreadIds, '909090');
 
@@ -193,7 +250,11 @@ const ChatRoom = () => {
    **/
 
   const ListEndLoader = () => {
-    if ((tempRoomList?.length > 0 || dataFromCache?.length > 0) && totalPages !== currentPage && searchString === '') {
+    if (
+      (tempRoomList?.length > 0 || dataFromCache?.length > 0) &&
+      totalPages !== currentPage &&
+      searchString === ''
+    ) {
       return <ActivityIndicator size={'large'} color={'#e7e8ea'} />;
     }
   };
@@ -213,7 +274,10 @@ const ChatRoom = () => {
     monitor = true;
     dispatch(removeRoomList());
     setTempRoomList([]);
-  }, [audienceFilterMap[selectedAudinceForFilter], chatRoomSortMap[selectedSortForFilter]]);
+  }, [
+    audienceFilterMap[selectedAudinceForFilter],
+    chatRoomSortMap[selectedSortForFilter],
+  ]);
 
   console.log('Current page', currentPage, 'Total page', monitor, lable);
 
@@ -228,15 +292,32 @@ const ChatRoom = () => {
     });
 
     if (roomListResponse) {
-      if (audienceFilterMap[selectedAudinceForFilter] === 'none' && chatRoomSortMap[selectedSortForFilter] === 'recent') {
+      if (
+        audienceFilterMap[selectedAudinceForFilter] === 'none' &&
+        chatRoomSortMap[selectedSortForFilter] === 'recent'
+      ) {
         setShowTempRoomList(false);
 
         if (monitor) {
-          dispatch(setCacheByFilter({type: 'none', data: [...roomListResponse?.data?.rooms]}));
+          dispatch(
+            setCacheByFilter({
+              type: 'none',
+              data: [...roomListResponse?.data?.rooms],
+            }),
+          );
           monitor = false;
         } else {
-          if (dataFromCache?.findIndex(x => x?._id === roomListResponse?.data?.rooms[0]?._id) === -1) {
-            dispatch(setCacheByFilter({type: 'none', data: [...dataFromCache, ...roomListResponse?.data?.rooms]}));
+          if (
+            dataFromCache?.findIndex(
+              x => x?._id === roomListResponse?.data?.rooms[0]?._id,
+            ) === -1
+          ) {
+            dispatch(
+              setCacheByFilter({
+                type: 'none',
+                data: [...dataFromCache, ...roomListResponse?.data?.rooms],
+              }),
+            );
           } else {
             // Alert.alert("fuck you")
             console.log('Same same:::::::::::::::::::::');
@@ -254,7 +335,15 @@ const ChatRoom = () => {
       }
     }
 
-    if (roomListResponse?.data?.metadata) setTotalPages(Number(Math.ceil(Number(roomListResponse?.data?.metadata[0]?.total) / Number(roomListResponse?.data?.metadata[0]?.limit))));
+    if (roomListResponse?.data?.metadata)
+      setTotalPages(
+        Number(
+          Math.ceil(
+            Number(roomListResponse?.data?.metadata[0]?.total) /
+              Number(roomListResponse?.data?.metadata[0]?.limit),
+          ),
+        ),
+      );
   };
 
   useFocusEffect(
@@ -276,29 +365,16 @@ const ChatRoom = () => {
   const userRole = useSelector(state => state.auth.user.role);
 
   useEffect(() => {
-    dynamicLinks()
-      .getInitialLink()
-      .then(link => {
-        if (link && link.url === 'https://app.fahdu.com/home?goto=brands') {
-          if (userRole === 'creator') {
-            dispatch(setPostsCardType({postCardType: 'brand'}));
-          } else {
-            console.log('Get Verify : ::::::::');
-
-            navigate('verificationStepOne');
-          }
-        }
-      });
-  }, [userRole]);
-
-  useEffect(() => {
     const backAction = () => {
       dispatch(toggleShowChatRoomSelector({show: false}));
 
       dispatch(toggleFloatingViews({show: 'showMessageFloat'}));
     };
 
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
 
     return () => backHandler.remove();
   }, []);
@@ -320,8 +396,34 @@ const ChatRoom = () => {
 
   const getFilteredData = () => {
     return showTempRoomList
-      ? tempRoomList?.filter(x => x.recipient?.displayName?.toLowerCase()?.search(searchString?.toLowerCase()) > -1)?.filter(x => (isOnlineFilterEnabled ? (isOnline ? x.onlineStatus === true : x.onlineStatus === false) : true))
-      : dataFromCache?.filter(x => x.recipient?.displayName?.toLowerCase()?.search(searchString?.toLowerCase()) > -1)?.filter(x => (isOnlineFilterEnabled ? (isOnline ? x.onlineStatus === true : x.onlineStatus === false) : true));
+      ? tempRoomList
+          ?.filter(
+            x =>
+              x.recipient?.displayName
+                ?.toLowerCase()
+                ?.search(searchString?.toLowerCase()) > -1,
+          )
+          ?.filter(x =>
+            isOnlineFilterEnabled
+              ? isOnline
+                ? x.onlineStatus === true
+                : x.onlineStatus === false
+              : true,
+          )
+      : dataFromCache
+          ?.filter(
+            x =>
+              x.recipient?.displayName
+                ?.toLowerCase()
+                ?.search(searchString?.toLowerCase()) > -1,
+          )
+          ?.filter(x =>
+            isOnlineFilterEnabled
+              ? isOnline
+                ? x.onlineStatus === true
+                : x.onlineStatus === false
+              : true,
+          );
   };
 
   useEffect(() => {
@@ -348,12 +450,18 @@ const ChatRoom = () => {
       };
     }, []);
 
-    let lastMessageObject = getRoomLastChatObject(props.lastChatFromRoomList, simplifiedDataFromApi?.chatRoomId);
+    let lastMessageObject = getRoomLastChatObject(
+      props.lastChatFromRoomList,
+      simplifiedDataFromApi?.chatRoomId,
+    );
 
     return (
       <>
         <TouchableOpacity
-          style={[styles.eachChatContainer, props.index === 0 ? {marginTop: 0} : null]}
+          style={[
+            styles.eachChatContainer,
+            props.index === 0 ? {marginTop: 0} : null,
+          ]}
           onPress={() => {
             if (!props.showSelectorCheckBox) {
               props.navigation.navigate('Chats', {
@@ -365,7 +473,9 @@ const ChatRoom = () => {
                 label: props?.item?.label,
               });
             } else {
-              dispatch(setMassMessageAddToUserList({_id: simplifiedDataFromApi?.id}));
+              dispatch(
+                setMassMessageAddToUserList({_id: simplifiedDataFromApi?.id}),
+              );
             }
           }}>
           <View style={{flexDirection: 'row', gap: responsiveWidth(4)}}>
@@ -383,28 +493,75 @@ const ChatRoom = () => {
             <View style={styles.chatOverViewWrapper}>
               <View style={styles.upperHalf}>
                 <View style={{flexDirection: 'row', gap: responsiveWidth(2)}}>
-                  <Text style={styles.upperHalfUserNameTitle}>{simplifiedDataFromApi.name}</Text>
+                  <Text style={styles.upperHalfUserNameTitle}>
+                    {simplifiedDataFromApi.name}
+                  </Text>
                   {props?.item?.recipient?.role === 'creator' ? (
-                    <View style={{transform: [{translateX: responsiveWidth(0.1)}, {translateY: responsiveWidth(0.1)}]}}>
+                    <View
+                      style={{
+                        transform: [
+                          {translateX: responsiveWidth(0.1)},
+                          {translateY: responsiveWidth(0.1)},
+                        ],
+                      }}>
                       <Verify />
                     </View>
                   ) : null}
                 </View>
                 <View style={styles.lowerHalf}>
                   <View style={styles.lowerHalfMessage}>
-                    <Text style={styles.messages} numberOfLines={1} ellipsizeMode="tail">
-                      {lastMessageObject?.length === 0 ? 'Loading...' : !lastMessageObject?.hasAttachment ? lastMessageObject?.message : lastMessageObject?.senderId === props?.currentUserId ? 'You have sent attachment' : 'You have recieved attachment'}
+                    <Text
+                      style={styles.messages}
+                      numberOfLines={1}
+                      ellipsizeMode="tail">
+                      {lastMessageObject?.length === 0
+                        ? 'Loading...'
+                        : !lastMessageObject?.hasAttachment
+                        ? lastMessageObject?.message
+                        : lastMessageObject?.senderId === props?.currentUserId
+                        ? 'You have sent attachment'
+                        : 'You have recieved attachment'}
                     </Text>
                   </View>
-                  {props?.arrayOfunReadThreadIds?.length > 0 && <View style={[styles.lowerHalfRest, props?.arrayOfunReadThreadIds.findIndex(x => x === props?.item?._id) === -1 ? {backgroundColor: 'transparent'} : {backgroundColor: '#FF7A5C'}]} />}
+                  {props?.arrayOfunReadThreadIds?.length > 0 && (
+                    <View
+                      style={[
+                        styles.lowerHalfRest,
+                        props?.arrayOfunReadThreadIds.findIndex(
+                          x => x === props?.item?._id,
+                        ) === -1
+                          ? {backgroundColor: 'transparent'}
+                          : {backgroundColor: '#FF7A5C'},
+                      ]}
+                    />
+                  )}
                 </View>
               </View>
             </View>
           </View>
 
-          {props?.item?.label !== 'none' && <View style={[styles.label, {backgroundColor: labelColor[props?.item?.label]}]} />}
+          {props?.item?.label !== 'none' && (
+            <View
+              style={[
+                styles.label,
+                {backgroundColor: labelColor[props?.item?.label]},
+              ]}
+            />
+          )}
 
-          {props.showSelectorCheckBox && <CustomCheckbox checked={target?.selectedUsers?.includes(simplifiedDataFromApi?.id) || target?.label?.includes(props?.item?.label)} onToggle={() => dispatch(setMassMessageAddToUserList({_id: simplifiedDataFromApi?.id}))} />}
+          {props.showSelectorCheckBox && (
+            <CustomCheckbox
+              checked={
+                target?.selectedUsers?.includes(simplifiedDataFromApi?.id) ||
+                target?.label?.includes(props?.item?.label)
+              }
+              onToggle={() =>
+                dispatch(
+                  setMassMessageAddToUserList({_id: simplifiedDataFromApi?.id}),
+                )
+              }
+            />
+          )}
         </TouchableOpacity>
       </>
     );
@@ -414,7 +571,9 @@ const ChatRoom = () => {
     <GestureHandlerRootView style={styles.chatRoomContainer}>
       {/* <ChatRoomSortModal /> */}
 
-      <View style={styles.titleMessageWrapper}>{/* <Text style={styles.titleMessage}>Messages</Text> */}</View>
+      <View style={styles.titleMessageWrapper}>
+        {/* <Text style={styles.titleMessage}>Messages</Text> */}
+      </View>
 
       {loading ? (
         <Loader />
@@ -425,28 +584,57 @@ const ChatRoom = () => {
             data={getFilteredData()}
             keyExtractor={item => item._id}
             renderItem={({item, index}) => (
-              <EachChildContainer showSelectorCheckBox={showSelectorCheckBox} item={item} index={index} navigation={navigation} currentUserId={currentUserId} lastChatFromRoomList={showTempRoomList ? tempRoomList : dataFromCache} arrayOfunReadThreadIds={arrayOfunReadThreadIds} />
+              <EachChildContainer
+                showSelectorCheckBox={showSelectorCheckBox}
+                item={item}
+                index={index}
+                navigation={navigation}
+                currentUserId={currentUserId}
+                lastChatFromRoomList={
+                  showTempRoomList ? tempRoomList : dataFromCache
+                }
+                arrayOfunReadThreadIds={arrayOfunReadThreadIds}
+              />
             )}
             contentContainerStyle={{
               paddingBottom: responsiveWidth(10),
             }}
             showsVerticalScrollIndicator={false}
             style={{marginBottom: responsiveWidth(1)}}
-            ItemSeparatorComponent={() => <View style={{height: 1, borderTopWidth: responsiveWidth(0.3), borderColor: '#E9E9E9'}} />}
+            ItemSeparatorComponent={() => (
+              <View
+                style={{
+                  height: 1,
+                  borderTopWidth: responsiveWidth(0.3),
+                  borderColor: '#E9E9E9',
+                }}
+              />
+            )}
             onEndReached={fetchNextPage}
             onEndReachedThreshold={0.1}
             ListFooterComponent={() => <ListEndLoader />}
-            ListHeaderComponent={() => !notificationAccess && <NotificationHeader />}
+            ListHeaderComponent={() =>
+              !notificationAccess && <NotificationHeader />
+            }
             // ListHeaderComponent={() => <Button title="le permission" color={'orange'} onPress={() => roomOperations()} />}
           />
         </View>
       )}
 
       <SwitcherSheet />
-      <LabelModal setIsOnlineFilterEnabled={setIsOnlineFilterEnabled} isOnlineFilterEnabled={isOnlineFilterEnabled} setIsOnline={setIsOnline} isOnline={isOnline} />
+      <LabelModal
+        setIsOnlineFilterEnabled={setIsOnlineFilterEnabled}
+        isOnlineFilterEnabled={isOnlineFilterEnabled}
+        setIsOnline={setIsOnline}
+        isOnline={isOnline}
+      />
       <LabelEditsModal />
 
-      {visibility === 'showMessageFloat' && role === 'creator' ? <FloatingButton onPress={() => console.log('Floating button pressed')} /> : null}
+      {visibility === 'showMessageFloat' && role === 'creator' ? (
+        <FloatingButton
+          onPress={() => console.log('Floating button pressed')}
+        />
+      ) : null}
 
       <CombineSelectorModal />
     </GestureHandlerRootView>

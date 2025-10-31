@@ -1,7 +1,12 @@
 import notifee, {AuthorizationStatus} from '@notifee/react-native';
-import {AndroidColor, AndroidImportance, AndroidStyle, AndroidLaunchActivityFlag} from '@notifee/react-native/dist/types/NotificationAndroid';
-import {Alert} from 'react-native';
-import Sound from 'react-native-sound';
+import {
+  AndroidColor,
+  AndroidImportance,
+  AndroidStyle,
+  AndroidLaunchActivityFlag,
+} from '@notifee/react-native/dist/types/NotificationAndroid';
+// import {Alert} from 'react-native';
+// import Sound from 'react-native-sound';
 
 export async function onDisplayNotification(data) {
   // Request permissions (required for iOS)
@@ -123,7 +128,10 @@ export const showPostInteractionNotification = async data => {
       color: '#E8210C',
       smallIcon: 'icon_notification',
       timestamp: Date.now(),
-      style: {type: AndroidStyle.BIGPICTURE, picture: data?.content?.style?.bigPicture},
+      style: {
+        type: AndroidStyle.BIGPICTURE,
+        picture: data?.content?.style?.bigPicture,
+      },
       pressAction: {
         id: 'default',
         launchActivity: 'default',
@@ -158,7 +166,10 @@ export const showPostInteractionNotification = async data => {
       color: '#E8210C',
       smallIcon: 'icon_notification',
       timestamp: Date.now(),
-      style: {type: AndroidStyle.BIGPICTURE, picture: data?.content?.style?.bigPicture},
+      style: {
+        type: AndroidStyle.BIGPICTURE,
+        picture: data?.content?.style?.bigPicture,
+      },
       pressAction: {
         id: 'default',
         launchActivity: 'default',
@@ -270,7 +281,9 @@ export async function showOthersCategoryNotification(remoteMessage) {
     // No Alert here — use console for debug
     console.log('📨 showOthersCategoryNotification:', remoteMessage);
 
-    const data = remoteMessage?.data?.content ? JSON.parse(remoteMessage.data.content) : remoteMessage?.content || {};
+    const data = remoteMessage?.data?.content
+      ? JSON.parse(remoteMessage.data.content)
+      : remoteMessage?.content || {};
 
     const {
       style: {title, subtitle, body, largeIcon, vibration, groupID},
@@ -311,7 +324,9 @@ export async function showSubscriptionNotification(remoteMessage) {
   try {
     console.log('📨 showSubscriptionNotification:', remoteMessage);
 
-    const data = remoteMessage?.data?.content ? JSON.parse(remoteMessage.data.content) : remoteMessage?.content || {};
+    const data = remoteMessage?.data?.content
+      ? JSON.parse(remoteMessage.data.content)
+      : remoteMessage?.content || {};
 
     console.log('ZOR', data);
 

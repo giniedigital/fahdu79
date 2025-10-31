@@ -1,24 +1,74 @@
-import {StyleSheet, View, TouchableOpacity, Text, Image, Pressable, BackHandler, Vibration, ToastAndroid, TextInput, ActivityIndicator, Platform, useWindowDimensions, Alert} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Text,
+  Image,
+  Pressable,
+  BackHandler,
+  Vibration,
+  ToastAndroid,
+  TextInput,
+  ActivityIndicator,
+  Platform,
+  useWindowDimensions,
+  Alert,
+} from 'react-native';
 import React, {useMemo, useCallback, useRef, useState, useEffect} from 'react';
-import {responsiveWidth, responsiveFontSize, responsiveScreenWidth} from 'react-native-responsive-dimensions';
-import {BottomSheetBackdrop, BottomSheetModal, BottomSheetTextInput} from '@gorhom/bottom-sheet';
+import {
+  responsiveWidth,
+  responsiveFontSize,
+  responsiveScreenWidth,
+} from 'react-native-responsive-dimensions';
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetTextInput,
+} from '@gorhom/bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
-import {setPostsCardType, toggleChatWindowPreviewSheet} from '../../../Redux/Slices/NormalSlices/HideShowSlice';
+import {
+  setPostsCardType,
+  toggleChatWindowPreviewSheet,
+} from '../../../Redux/Slices/NormalSlices/HideShowSlice';
 
 import {useFocusEffect} from '@react-navigation/native';
-import {ChatWindowError, ChatWindowFollowError, LoginPageErrors} from '../ErrorSnacks';
+import {
+  ChatWindowError,
+  ChatWindowFollowError,
+  LoginPageErrors,
+} from '../ErrorSnacks';
 import {updateCacheRoomList} from '../../../Redux/Slices/NormalSlices/RoomListSlice';
-import {dismissProgressNotification, displayNotificationProgressIndicator} from '../../../Notificaton';
+import {
+  dismissProgressNotification,
+  displayNotificationProgressIndicator,
+} from '../../../Notificaton';
 import {pushSentMessageResponse} from '../../../Redux/Slices/NormalSlices/MessageSlices/ThreadSlices';
-import {generateVideoThumbnail, getVideoMetadata, videoReducer} from '../../../FFMPeg/FFMPegModule';
+import {
+  generateVideoThumbnail,
+  getVideoMetadata,
+  videoReducer,
+} from '../../../FFMPeg/FFMPegModule';
 
 import {token as memoizedToken} from '../../../Redux/Slices/NormalSlices/AuthSlice';
 import {useSendMessageMutation} from '../../../Redux/Slices/QuerySlices/roomListSliceApi';
-import {setAsPremium, setMediaData} from '../../../Redux/Slices/NormalSlices/MessageSlices/ChatWindowPreviewDataSlice';
-import PdfThumbnail from 'react-native-pdf-thumbnail';
-import {useFollowUserMutation, useUploadAttachmentMutation} from '../../../Redux/Slices/QuerySlices/chatWindowAttachmentSliceApi';
-import VideoPlayer from 'react-native-video-controls';
-import {FONT_SIZES, nTwins, nTwinsFont, padios, selectionTwin, WIDTH_SIZES} from '../../../DesiginData/Utility';
+import {
+  setAsPremium,
+  setMediaData,
+} from '../../../Redux/Slices/NormalSlices/MessageSlices/ChatWindowPreviewDataSlice';
+
+import {
+  useFollowUserMutation,
+  useUploadAttachmentMutation,
+} from '../../../Redux/Slices/QuerySlices/chatWindowAttachmentSliceApi';
+import {VideoView, useVideoPlayer} from 'expo-video';
+import {
+  FONT_SIZES,
+  nTwins,
+  nTwinsFont,
+  padios,
+  selectionTwin,
+  WIDTH_SIZES,
+} from '../../../DesiginData/Utility';
 import AnimatedButton from '../AnimatedButton';
 import Paisa from '../../../Assets/svg/paisa.svg';
 import DIcon from '../../../DesiginData/DIcons';
@@ -26,23 +76,16 @@ import DIcon from '../../../DesiginData/DIcons';
 //Main
 
 async function generateThumbnail(docPath) {
-  try {
-    if (docPath) {
-      const {uri, width, height} = await PdfThumbnail.generate(docPath, 0);
-      return uri;
-    } else {
-      console.log('📁 Please provide url to generateThumbnail funciton');
-    }
-  } catch (e) {
-    console.log('generateThumbnail Error', e.message);
-  }
+  //Removed react native pdf thumbnail
+  return '';
 }
 
 const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
   const bottomSheetRef = useRef(null);
 
-  const homeBottomSheetVisibility = useSelector(state => state.hideShow.visibility.chatWindowPreview);
-  //   const homeBottomSheetVisibility = 1;
+  const homeBottomSheetVisibility = useSelector(
+    state => state.hideShow.visibility.chatWindowPreview,
+  );
 
   const dispatch = useDispatch();
 
@@ -89,12 +132,9 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
     }
   }, [homeBottomSheetVisibility]);
 
-  //Main Code
-
   //!<---------------------Refs--------->
 
   const attachmentInputRef = React.useRef();
-  const videoRef = React.useRef();
 
   //!<---------------------States--------->
 
@@ -124,8 +164,21 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
 
   const selectedMedia = useSelector(state => state.chatWindowPreviewData.media);
 
-  const isAttachmentPremium = useSelector(state => state.chatWindowPreviewData.premium);
+  const isAttachmentPremium = useSelector(
+    state => state.chatWindowPreviewData.premium,
+  );
   const [followUser] = useFollowUserMutation();
+
+  // Initialize Expo Video Player for preview
+  const player = useVideoPlayer(
+    mediaPath && attachmentType === 'video' ? mediaPath : null,
+    player => {
+      if (player && mediaPath && attachmentType === 'video') {
+        player.loop = false;
+        player.muted = false;
+      }
+    },
+  );
 
   useEffect(() => {
     if (bottomSheetRef.current !== null) {
@@ -184,19 +237,12 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
     }
   }
 
-  // console.log(amount)
-
   const handleAmount = x => {
     setAmount(x);
   };
 
   const handleUploadAttachment = useCallback(() => {
     console.log('🚀 Handle upload');
-
-    // if(netConnection?.isConnected === false) {
-    //   ChatWindowError("Please check your internet connection");
-    //   return 0
-    // }
 
     if (isAttachmentPremium === true && (amount < 1 || amount === undefined)) {
       ChatWindowError('You must add atleast 1 coin');
@@ -216,22 +262,22 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
       if (attachmentType === 'image') {
         const attachment = Object.assign({});
         const formData = new FormData();
-        formData.append('keyName', 'message_attachment'); //Will bind with every attachemnt upload
+        formData.append('keyName', 'message_attachment');
         formData.append('file', selectedMedia?.image?.fileData);
 
         uploadAttachment({token, formData}).then(e => {
-          //2nd Step
           if (e?.data?.statusCode === 200) {
-            attachment.charge_amount = isAttachmentPremium && amount >= 1 ? amount : 0;
+            attachment.charge_amount =
+              isAttachmentPremium && amount >= 1 ? amount : 0;
             attachment.format = 'image';
-            attachment.is_charagble = isAttachmentPremium && amount >= 1 ? 'true' : 'false';
+            attachment.is_charagble =
+              isAttachmentPremium && amount >= 1 ? 'true' : 'false';
             attachment.paid_by_reciever = false;
             attachment.preview = selectedMedia?.image?.preview;
             attachment.type = e?.data?.data?.key;
             attachment.url = e?.data?.data?.url;
             attachment.room_id = chatRoomId;
 
-            //!Send to server
             sendMessage({
               token,
               message: message,
@@ -242,14 +288,22 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
                 setDisableSendButton(false);
 
                 if (e?.error?.data?.message?.search('Follow') >= 0) {
-                  ChatWindowFollowError(e?.error?.data?.message, followUser, token, name);
+                  ChatWindowFollowError(
+                    e?.error?.data?.message,
+                    followUser,
+                    token,
+                    name,
+                  );
                 }
 
                 if (e?.error?.data?.message?.search('insufficient') >= 0) {
                   LoginPageErrors('Insufficient Balance');
                 }
 
-                console.log('Attachemet Image Sent with after message***********', e);
+                console.log(
+                  'Attachemet Image Sent with after message***********',
+                  e,
+                );
                 dismissProgressNotification();
                 dispatch(
                   updateCacheRoomList({
@@ -273,7 +327,9 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
                 );
                 onBackPress();
               })
-              .catch(e => console.log('Uploaded Image attachment After Error', e));
+              .catch(e =>
+                console.log('Uploaded Image attachment After Error', e),
+              );
           } else {
             ChatWindowError('There was error while sending image');
             setDisableSendButton(false);
@@ -288,23 +344,23 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
         const attachment = Object.assign({});
         const formData = new FormData();
 
-        formData.append('keyName', 'message_attachment'); //Will bind with every attachemnt upload
+        formData.append('keyName', 'message_attachment');
         formData.append('file', selectedMedia?.pdf?.fileData);
 
-        uploadAttachment({token, formData}) //1st Step
+        uploadAttachment({token, formData})
           .then(e => {
-            //2nd Step
             if (e?.data?.statusCode === 200) {
-              attachment.charge_amount = isAttachmentPremium && amount >= 1 ? amount : 0;
+              attachment.charge_amount =
+                isAttachmentPremium && amount >= 1 ? amount : 0;
               attachment.format = 'document';
-              attachment.is_charagble = isAttachmentPremium && amount >= 1 ? 'true' : 'false';
+              attachment.is_charagble =
+                isAttachmentPremium && amount >= 1 ? 'true' : 'false';
               attachment.paid_by_reciever = false;
               attachment.preview = 'assets/icons/pdf.png';
               attachment.type = e?.data?.data?.key;
               attachment.url = e?.data?.data?.url;
               attachment.room_id = chatRoomId;
 
-              //!Send to server
               sendMessage({
                 token,
                 message: message ?? '',
@@ -313,14 +369,18 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
               })
                 .then(e => {
                   if (e?.error?.data?.message?.search('Follow') >= 0) {
-                    ChatWindowFollowError(e?.error?.data?.message, followUser, token, name);
+                    ChatWindowFollowError(
+                      e?.error?.data?.message,
+                      followUser,
+                      token,
+                      name,
+                    );
                   }
 
                   if (e?.error?.data?.message?.search('insufficient') >= 0) {
                     LoginPageErrors('Insufficient Balance');
                     setDisableSendButton(false);
                   } else {
-                    // LoginPageErrors("Can't reach server");
                     setDisableSendButton(false);
                   }
 
@@ -377,13 +437,14 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
             console.log(meta, ':::META');
 
             const result = await videoReducer(uri);
-            // Alert.alert('compressed');
             return result;
           }
 
           videoFormatter(mediaPath).then(async compressedVideoUrl => {
             if (compressedVideoUrl) {
-              let compressedVideoThumbnail = await generateVideoThumbnail(compressedVideoUrl);
+              let compressedVideoThumbnail = await generateVideoThumbnail(
+                compressedVideoUrl,
+              );
 
               const formData = new FormData();
 
@@ -412,9 +473,11 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
                   uploadAttachment({token, formData}).then(e => {
                     console.log('Uploading video to server');
                     if (e?.data?.statusCode === 200) {
-                      attachment.charge_amount = isAttachmentPremium && amount >= 1 ? amount : 0;
+                      attachment.charge_amount =
+                        isAttachmentPremium && amount >= 1 ? amount : 0;
                       attachment.format = 'video';
-                      attachment.is_charagble = isAttachmentPremium && amount >= 1 ? 'true' : 'false';
+                      attachment.is_charagble =
+                        isAttachmentPremium && amount >= 1 ? 'true' : 'false';
                       attachment.paid_by_reciever = false;
                       attachment.preview = preview;
                       attachment.type = e?.data?.data?.key;
@@ -431,12 +494,19 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
                       })
                         .then(e => {
                           if (e?.error?.data?.message?.search('Follow') >= 0) {
-                            ChatWindowFollowError(e?.error?.data?.message, followUser, token, name);
+                            ChatWindowFollowError(
+                              e?.error?.data?.message,
+                              followUser,
+                              token,
+                              name,
+                            );
                             setDisableSendButton(false);
                             return;
                           }
 
-                          console.log('Video Attachemet Sent with After message');
+                          console.log(
+                            'Video Attachemet Sent with After message',
+                          );
                           dismissProgressNotification();
                           dispatch(
                             updateCacheRoomList({
@@ -462,7 +532,9 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
                           onBackPress();
                         })
 
-                        .catch(e => console.log('Video upload attachment After Error', e));
+                        .catch(e =>
+                          console.log('Video upload attachment After Error', e),
+                        );
                     } else {
                       console.log('Error while sending video', e);
                       setDisableSendButton(false);
@@ -515,28 +587,74 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
     }
   }, [selectedMedia]);
 
-  const renderBackdrop = useCallback(props => <BottomSheetBackdrop {...props} disappearsOnIndex={-1} appearsOnIndex={1} />, []);
+  const renderBackdrop = useCallback(
+    props => (
+      <BottomSheetBackdrop
+        {...props}
+        disappearsOnIndex={-1}
+        appearsOnIndex={1}
+      />
+    ),
+    [],
+  );
 
   return (
     homeBottomSheetVisibility === 1 && (
-      <BottomSheetModal ref={bottomSheetRef} index={homeBottomSheetVisibility} snapPoints={snapPoints} onChange={handleSheetChanges} enablePanDownToClose={true} backdropComponent={renderBackdrop} keyboardBehavior="interactive" backgroundStyle={{backgroundColor: '#fffef9'}}>
-        <View ref={contentRef} onLayout={onContentLayout} style={styles.contentContainer}>
+      <BottomSheetModal
+        ref={bottomSheetRef}
+        index={homeBottomSheetVisibility}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+        enablePanDownToClose={true}
+        backdropComponent={renderBackdrop}
+        keyboardBehavior="interactive"
+        backgroundStyle={{backgroundColor: '#fffef9'}}>
+        <View
+          ref={contentRef}
+          onLayout={onContentLayout}
+          style={styles.contentContainer}>
           {!next ? (
             <Text style={styles.title}>Attach Media</Text>
           ) : (
             <View>
-              <Text style={{marginLeft: responsiveWidth(3), fontFamily: 'Rubik-SemiBold', fontSize: FONT_SIZES[20], color: '#1E1E1E', marginTop: responsiveWidth(2)}}>Set Chat Fee</Text>
-              <Text style={{marginLeft: responsiveWidth(3), fontFamily: 'Rubik-Regular', fontSize: FONT_SIZES[12], color: '#1e1e1e', marginTop: responsiveWidth(1)}}>Create your custom automated message</Text>
+              <Text
+                style={{
+                  marginLeft: responsiveWidth(3),
+                  fontFamily: 'Rubik-SemiBold',
+                  fontSize: FONT_SIZES[20],
+                  color: '#1E1E1E',
+                  marginTop: responsiveWidth(2),
+                }}>
+                Set Chat Fee
+              </Text>
+              <Text
+                style={{
+                  marginLeft: responsiveWidth(3),
+                  fontFamily: 'Rubik-Regular',
+                  fontSize: FONT_SIZES[12],
+                  color: '#1e1e1e',
+                  marginTop: responsiveWidth(1),
+                }}>
+                Create your custom automated message
+              </Text>
             </View>
           )}
 
           {!next && (
             <View style={styles.textInputContainer}>
-              <View style={[styles.selectImageBox, {flexDirection: 'row', alignItems: 'center'}]}>
+              <View
+                style={[
+                  styles.selectImageBox,
+                  {flexDirection: 'row', alignItems: 'center'},
+                ]}>
                 <View style={styles.previewModalImageWrapper}>
                   {attachmentType !== 'video' ? (
                     <Image
-                      source={!mediaPath ? require('../../../Assets/Images/Profile.jpg') : {uri: mediaPath}}
+                      source={
+                        !mediaPath
+                          ? require('../../../Assets/Images/Profile.jpg')
+                          : {uri: mediaPath}
+                      }
                       style={{
                         flex: 1,
                         width: '100%',
@@ -547,20 +665,16 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
                       resizeMode="contain"
                     />
                   ) : (
-                    <VideoPlayer
-                      ref={videoRef}
+                    <VideoView
+                      player={player}
                       style={{
                         flex: 1,
                         width: '100%',
                         backgroundColor: '#f3f3f3',
                         borderRadius: responsiveWidth(4),
                       }}
-                      source={{uri: mediaPath}}
-                      toggleResizeModeOnFullscreen={true}
-                      resizeMode={'contain'}
-                      seekColor="purple"
-                      disableVolume
-                      disableBack
+                      contentFit="contain"
+                      nativeControls={true}
                     />
                   )}
                 </View>
@@ -588,14 +702,56 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
           )}
 
           {!next && (
-            <View style={{borderWidth: responsiveWidth(0.5), borderRadius: responsiveWidth(3.73), width: responsiveWidth(80), marginTop: 20, alignSelf: 'center'}}>
+            <View
+              style={{
+                borderWidth: responsiveWidth(0.5),
+                borderRadius: responsiveWidth(3.73),
+                width: responsiveWidth(80),
+                marginTop: 20,
+                alignSelf: 'center',
+              }}>
               <View style={styles.FollowersSubScribersToggle}>
-                <TouchableOpacity onPress={() => handleAttachmentAsPremium(false)} style={[styles.Followers, isAttachmentPremium === false ? {backgroundColor: '#FFA86B', borderWidth: responsiveWidth(0.3), borderRadius: responsiveWidth(2.5)} : null]}>
-                  <Text style={{fontFamily: 'Rubik-SemiBold', fontSize: FONT_SIZES[14], color: '#282828'}}>Free</Text>
+                <TouchableOpacity
+                  onPress={() => handleAttachmentAsPremium(false)}
+                  style={[
+                    styles.Followers,
+                    isAttachmentPremium === false
+                      ? {
+                          backgroundColor: '#FFA86B',
+                          borderWidth: responsiveWidth(0.3),
+                          borderRadius: responsiveWidth(2.5),
+                        }
+                      : null,
+                  ]}>
+                  <Text
+                    style={{
+                      fontFamily: 'Rubik-SemiBold',
+                      fontSize: FONT_SIZES[14],
+                      color: '#282828',
+                    }}>
+                    Free
+                  </Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => handleAttachmentAsPremium(true)} style={[styles.SubScribers, isAttachmentPremium === true ? {backgroundColor: '#FFA86B', borderWidth: responsiveWidth(0.3), borderRadius: responsiveWidth(2.5)} : null]}>
-                  <Text key={'2SubScribers'} style={{fontFamily: 'Rubik-SemiBold', fontSize: FONT_SIZES[14], color: '#282828'}}>
+                <TouchableOpacity
+                  onPress={() => handleAttachmentAsPremium(true)}
+                  style={[
+                    styles.SubScribers,
+                    isAttachmentPremium === true
+                      ? {
+                          backgroundColor: '#FFA86B',
+                          borderWidth: responsiveWidth(0.3),
+                          borderRadius: responsiveWidth(2.5),
+                        }
+                      : null,
+                  ]}>
+                  <Text
+                    key={'2SubScribers'}
+                    style={{
+                      fontFamily: 'Rubik-SemiBold',
+                      fontSize: FONT_SIZES[14],
+                      color: '#282828',
+                    }}>
                     Paid
                   </Text>
                 </TouchableOpacity>
@@ -610,11 +766,20 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
                   <Text style={[styles.titleSetPrice]}>Set Price</Text>
                 </View>
               </View>
-              <View style={{flexDirection: 'row', alignItems: 'center', marginRight: responsiveWidth(2), gap: Platform.OS == 'ios' ? responsiveWidth(2) : null}}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginRight: responsiveWidth(2),
+                  gap: Platform.OS == 'ios' ? responsiveWidth(2) : null,
+                }}>
                 <BottomSheetTextInput
                   maxLength={6}
                   keyboardType="number-pad"
-                  style={[{padding: 0, color: '#1e1e1e', fontFamily: 'Rubik-Medium'}, styles.amountStyle]}
+                  style={[
+                    {padding: 0, color: '#1e1e1e', fontFamily: 'Rubik-Medium'},
+                    styles.amountStyle,
+                  ]}
                   value={amount}
                   textAlign="right"
                   selectionColor={selectionTwin()}
@@ -631,22 +796,51 @@ const ChatWindowPreviewSheet = ({chatRoomId, name}) => {
           {isAttachmentPremium ? (
             <View style={styles.buttonContainer}>
               <View style={{flexBasis: '20%'}}>
-                <AnimatedButton title={<DIcon provider={'Feather'} name={'chevron-left'} />} showOverlay={false} style={{backgroundColor: 'white'}} onPress={() => setNext(false)} highlightOnPress={true} highlightColor="#FFF3EB" />
+                <AnimatedButton
+                  title={<DIcon provider={'Feather'} name={'chevron-left'} />}
+                  showOverlay={false}
+                  style={{backgroundColor: 'white'}}
+                  onPress={() => setNext(false)}
+                  highlightOnPress={true}
+                  highlightColor="#FFF3EB"
+                />
               </View>
 
               {next ? (
                 <View style={{flexBasis: '76%'}}>
-                  <AnimatedButton title={'Send'} showOverlay={false} onPress={() => handleUploadAttachment()} loading={disableSendBtton} disabled={disableSendBtton} highlightOnPress={true} highlightColor="#FFC399" />
+                  <AnimatedButton
+                    title={'Send'}
+                    showOverlay={false}
+                    onPress={() => handleUploadAttachment()}
+                    loading={disableSendBtton}
+                    disabled={disableSendBtton}
+                    highlightOnPress={true}
+                    highlightColor="#FFC399"
+                  />
                 </View>
               ) : (
                 <View style={{flexBasis: '76%'}}>
-                  <AnimatedButton title={'Next'} showOverlay={false} onPress={() => setNext(true)} highlightOnPress={true} highlightColor="#FFC399" />
+                  <AnimatedButton
+                    title={'Next'}
+                    showOverlay={false}
+                    onPress={() => setNext(true)}
+                    highlightOnPress={true}
+                    highlightColor="#FFC399"
+                  />
                 </View>
               )}
             </View>
           ) : (
             <View>
-              <AnimatedButton showOverlay={false} title={'Send'} onPress={() => handleUploadAttachment()} loading={disableSendBtton} disabled={disableSendBtton} highlightOnPress={true} highlightColor="#FFC399" />
+              <AnimatedButton
+                showOverlay={false}
+                title={'Send'}
+                onPress={() => handleUploadAttachment()}
+                loading={disableSendBtton}
+                disabled={disableSendBtton}
+                highlightOnPress={true}
+                highlightColor="#FFC399"
+              />
             </View>
           )}
         </View>
@@ -744,13 +938,13 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#e3dff2',
     height: '100%',
-    lineHeight: Platform.OS === 'ios' ? 50 : 25, //ios
+    lineHeight: Platform.OS === 'ios' ? 50 : 25,
     borderRadius: responsiveWidth(2),
     textAlign: 'center',
     textAlignVertical: 'center',
     flexBasis: '55%',
     fontFamily: 'MabryPro-Regular',
-    overflow: 'hidden', //For ios
+    overflow: 'hidden',
   },
   loginButton: {
     paddingHorizontal: responsiveWidth(2),

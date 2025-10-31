@@ -54,19 +54,20 @@ import {audioVideoApi} from '../Slices/QuerySlices/audioVideoSlice';
 import reduxStorage from '../../MMKVConfig';
 
 const createEnhancers = getDefaultEnhancers => {
-  if (__DEV__) {
-    const reactotron = require('../../ReactotronConfig').default;
-    return getDefaultEnhancers().concat(reactotron.createEnhancer());
-  } else {
-    return getDefaultEnhancers();
-  }
+  return getDefaultEnhancers();
 };
 
 const persistConfig = {
   timeout: 2000,
   key: 'root',
   storage: reduxStorage,
-  blacklist: ['livechats', 'stories', 'wallet', 'profileFeedCache', 'myProfileFeedCache'],
+  blacklist: [
+    'livechats',
+    'stories',
+    'wallet',
+    'profileFeedCache',
+    'myProfileFeedCache',
+  ],
 };
 
 const combined_reducer = combineReducers({

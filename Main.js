@@ -1,16 +1,39 @@
-import {StyleSheet, AppState, StatusBar, Platform, View, Linking, Alert} from 'react-native';
+import {
+  StyleSheet,
+  AppState,
+  StatusBar,
+  Platform,
+  View,
+  Linking,
+  Alert,
+} from 'react-native';
 import React, {useCallback, useRef, useState} from 'react';
 import StackNavigation from './Navigation/StackNavigation';
 import {useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import socketServcies from './SocketServices';
 import messaging, {firebase} from '@react-native-firebase/messaging';
-import {onDisplayNotification, displayChatNotification, showPostInteractionNotification, liveStreamNotification, showOthersCategoryNotification, showSubscriptionNotification} from './Notificaton';
-import {enableNotificationModal, resetAllModal, toggleEmailVerificationModal, toggleNewMessageRecieved} from './Redux/Slices/NormalSlices/HideShowSlice';
-import {authLogout, currentUserInformation, token as memoizedToken} from './Redux/Slices/NormalSlices/AuthSlice';
+import {
+  onDisplayNotification,
+  displayChatNotification,
+  showPostInteractionNotification,
+  liveStreamNotification,
+  showOthersCategoryNotification,
+  showSubscriptionNotification,
+} from './Notificaton';
+import {
+  enableNotificationModal,
+  resetAllModal,
+  toggleEmailVerificationModal,
+  toggleNewMessageRecieved,
+} from './Redux/Slices/NormalSlices/HideShowSlice';
+import {
+  authLogout,
+  currentUserInformation,
+  token as memoizedToken,
+} from './Redux/Slices/NormalSlices/AuthSlice';
 import {useSendFcmTokenMutation} from './Redux/Slices/QuerySlices/chatWindowAttachmentSliceApi';
 
-import dynamicLinks from '@react-native-firebase/dynamic-links';
 import notifee from '@notifee/react-native';
 
 // import notifee, {EventType} from '@notifee/react-native';
@@ -18,8 +41,14 @@ import notifee from '@notifee/react-native';
 import axios from 'axios';
 import {navigate} from './Navigation/RootNavigation';
 import {screens} from './DesiginData/Data';
-import {removeRoomList, updateCacheRoomList} from './Redux/Slices/NormalSlices/RoomListSlice';
-import {emptyUnreadRoomList, pushUnReadRoomIds} from './Redux/Slices/NormalSlices/UnReadThreadSlice';
+import {
+  removeRoomList,
+  updateCacheRoomList,
+} from './Redux/Slices/NormalSlices/RoomListSlice';
+import {
+  emptyUnreadRoomList,
+  pushUnReadRoomIds,
+} from './Redux/Slices/NormalSlices/UnReadThreadSlice';
 import {useFocusEffect} from '@react-navigation/native';
 import {LoginPageErrors, OnlineSnack} from './Src/Components/ErrorSnacks';
 import {deleteCachedMessages} from './Redux/Slices/NormalSlices/MessageSlices/ThreadSlices';
@@ -29,13 +58,31 @@ import {setUpdateStatus} from './Redux/Slices/NormalSlices/HasAppUpdatedSlice';
 import {resetAll} from './Redux/Actions';
 
 // import SplashScreen from "react-native-splash-screen";
-import {pushChats, pushGoals, removeGoals, setMuteState, setToAnimate, setViewers, updateGoals} from './Redux/Slices/NormalSlices/LiveStream/LiveChats';
+import {
+  pushChats,
+  pushGoals,
+  removeGoals,
+  setMuteState,
+  setToAnimate,
+  setViewers,
+  updateGoals,
+} from './Redux/Slices/NormalSlices/LiveStream/LiveChats';
 import FlashMessage from 'react-native-flash-message';
 import {checkApplicationPermission} from './Permissions';
 import {deleteCredentials} from './Redux/Slices/NormalSlices/TempCredentials';
-import {extractUserIdFromUrl, extractUserNameAndroid, extractUsernameFromDeepLink, isVersionGreaterOrEqual, joinLivestream} from './DesiginData/Utility';
+import {
+  extractUserIdFromUrl,
+  extractUserNameAndroid,
+  extractUsernameFromDeepLink,
+  isVersionGreaterOrEqual,
+  joinLivestream,
+} from './DesiginData/Utility';
 import {setRefferalLink} from './Redux/Slices/NormalSlices/Deeplink/DeeplinkSlice';
-import {setCallbackId, setCallCallback, setCallData} from './Redux/Slices/NormalSlices/Call/CallSlice';
+import {
+  setCallbackId,
+  setCallCallback,
+  setCallData,
+} from './Redux/Slices/NormalSlices/Call/CallSlice';
 import {addCallback} from './Redux/socketCallbacks';
 import AlertBox from './Src/AlertBox';
 import ReLoginModal from './Src/Screens/LoginSignup/ReLoginModal';
@@ -52,18 +99,27 @@ const Main = () => {
   const [sendFcmToken] = useSendFcmTokenMutation();
   const dispatch = useDispatch();
   const [showLottie, setShowLottie] = useState(false);
-  const currentChatRoomId = useSelector(state => state.chatWindowCurrentChattingRoom.data.roomId);
+  const currentChatRoomId = useSelector(
+    state => state.chatWindowCurrentChattingRoom.data.roomId,
+  );
   const doUpdate = useSelector(state => state.hasAppUpdated.app.updated);
-  const doUserClickedOnForeGroundNotification = useSelector(state => state.hideShow.visibility.notificationClick);
+  const doUserClickedOnForeGroundNotification = useSelector(
+    state => state.hideShow.visibility.notificationClick,
+  );
   const hasHandledInitialLink = useRef(false);
 
   const doUserLoggedIn = useSelector(state => state.auth.user.token);
 
-  const isNotificationFromQuitState = useSelector(state => state.call.data.fromNotification);
+  const isNotificationFromQuitState = useSelector(
+    state => state.call.data.fromNotification,
+  );
 
   useEffect(() => {
     // Listen for app state changes to handle navigation from a killed state
-    const appStateSubscription = AppState.addEventListener('change', CallKeepService.handleAppStateChange);
+    const appStateSubscription = AppState.addEventListener(
+      'change',
+      CallKeepService.handleAppStateChange,
+    );
 
     // Alert.alert('fuk');
     return () => {
@@ -127,14 +183,20 @@ const Main = () => {
       });
 
       socketServcies.on('completed_goal', data => {
-        console.log('::::::::::::::::::::::::::COMPLETED_GOAL::::::::::::', data);
+        console.log(
+          '::::::::::::::::::::::::::COMPLETED_GOAL::::::::::::',
+          data,
+        );
         dispatch(removeGoals({data}));
         dispatch(pushChats({chat: {...data, type: 'completed'}}));
         dispatch(setToAnimate({toAnimate: true}));
       });
 
       socketServcies.on('livestream_join', data => {
-        console.log('::::::::::::::::::::::::::NEW_USER_JOIN::::::::::::', data);
+        console.log(
+          '::::::::::::::::::::::::::NEW_USER_JOIN::::::::::::',
+          data,
+        );
         dispatch(pushChats({chat: {...data, type: 'new_user'}}));
       });
 
@@ -155,11 +217,14 @@ const Main = () => {
             channel: 'call',
             createdAt: new Date().toISOString(), // Current timestamp
             hasAttachment: false,
-            profile_image: createdBy?.profile_image?.url ?? 'https://fahdu-bucket.s3.us-east-1.amazonaws.com/assets/default-avatar-profile-icon-1.jpg',
+            profile_image:
+              createdBy?.profile_image?.url ??
+              'https://fahdu-bucket.s3.us-east-1.amazonaws.com/assets/default-avatar-profile-icon-1.jpg',
             roomId: data.roomId,
             sender_id: createdBy._id,
             sender_role: createdBy.role,
-            subtitle: data.callType === 'audio' ? '📞 Audio Call' : '📹 Video Call',
+            subtitle:
+              data.callType === 'audio' ? '📞 Audio Call' : '📹 Video Call',
             title: `${createdBy.displayName} is calling you`,
             username: createdBy.displayName,
           };
@@ -310,7 +375,10 @@ const Main = () => {
             } else {
               //android and ios both get different links
 
-              let userName = Platform.OS === 'android' ? extractUserNameAndroid(url) : extractUserNameAndroid(url);
+              let userName =
+                Platform.OS === 'android'
+                  ? extractUserNameAndroid(url)
+                  : extractUserNameAndroid(url);
 
               let userId = extractUserIdFromUrl(url);
 
@@ -415,14 +483,20 @@ const Main = () => {
   }, [currentUserId]);
 
   const joinLiveStreamWithNotificationHandler = async (detail, token) => {
-    const joinStreamApi = await joinLivestream(token, detail?.notification?.data?.roomId);
+    const joinStreamApi = await joinLivestream(
+      token,
+      detail?.notification?.data?.roomId,
+    );
 
     console.log(joinStreamApi, 'joinStreamAPi');
 
     if (joinStreamApi?.statusCode === 200) {
       console.log('liveJOINDATA', data?.data?.data);
 
-      navigate('confirmlivestreamjoin', {data: joinStreamApi?.data, roomId: detail?.notification?.data?.roomId});
+      navigate('confirmlivestreamjoin', {
+        data: joinStreamApi?.data,
+        roomId: detail?.notification?.data?.roomId,
+      });
     } else {
       if (joinStreamApi?.statusCode === 400) {
         LoginPageErrors('Hey!, Livestream has ended 🥺');
@@ -446,11 +520,18 @@ const Main = () => {
 
       if (initialNotification?.notification?.data?.type === 'message') {
         try {
-          navigate('Chats', {chatRoomId: initialNotification?.notification?.data?.roomId, name: initialNotification?.notification?.data?.userName, profileImageUrl: initialNotification?.notification?.android?.largeIcon});
+          navigate('Chats', {
+            chatRoomId: initialNotification?.notification?.data?.roomId,
+            name: initialNotification?.notification?.data?.userName,
+            profileImageUrl:
+              initialNotification?.notification?.android?.largeIcon,
+          });
         } catch (e) {
           console.log('Error on MainJS', e?.message);
         }
-      } else if (initialNotification?.notification?.data?.type === 'livestream') {
+      } else if (
+        initialNotification?.notification?.data?.type === 'livestream'
+      ) {
         await joinLiveStreamWithNotificationHandler(initialNotification, token);
       } else {
         console.log('NOTHING_MATCHED');
@@ -577,7 +658,9 @@ const Main = () => {
             updateCacheRoomList({
               chatRoomId: remoteNotificationData?.content?.roomId,
               createdAt: remoteNotificationData?.content?.createdAt,
-              message: remoteNotificationData?.content?.hasAttachment ? '' : remoteNotificationData?.content?.message,
+              message: remoteNotificationData?.content?.hasAttachment
+                ? ''
+                : remoteNotificationData?.content?.message,
               hasAttachment: remoteNotificationData?.content?.hasAttachment,
               senderId: remoteNotificationData?.content?.sender_id,
               profileImage: remoteNotificationData?.content?.profile_image,
@@ -588,7 +671,11 @@ const Main = () => {
 
           console.log('808080', remoteNotificationData, '::');
 
-          dispatch(pushUnReadRoomIds({chatRoomId: remoteNotificationData?.content?.roomId}));
+          dispatch(
+            pushUnReadRoomIds({
+              chatRoomId: remoteNotificationData?.content?.roomId,
+            }),
+          );
 
           if (currentChatRoomId !== remoteNotificationData?.content?.roomId) {
             onDisplayNotification(remoteNotificationData?.content);

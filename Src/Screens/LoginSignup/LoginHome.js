@@ -1,11 +1,33 @@
-import {StyleSheet, Text, View, Image, Platform, TouchableOpacity, Pressable, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Platform,
+  TouchableOpacity,
+  Pressable,
+  ScrollView,
+} from 'react-native';
 import React, {useCallback, useEffect, useState} from 'react';
-import dynamicLinks from '@react-native-firebase/dynamic-links';
+
 import {useDispatch, useSelector} from 'react-redux';
 import {googleSignIn, signOutGoogle, appleSignIn} from '../../../OAuth';
-import {currentUserInformation, enableNotificationModal, setPostsCardType, toggleVerficationScreen} from '../../../Redux/Slices/NormalSlices/AuthSlice';
-import {setSharedCampaignId, setUserFromCampaignLink, setYlyticInstagramUserId} from '../../../Redux/Slices/NormalSlices/Deeplink/DeeplinkSlice';
-import {responsiveWidth, responsiveFontSize, responsiveHeight} from 'react-native-responsive-dimensions';
+import {
+  currentUserInformation,
+  enableNotificationModal,
+  setPostsCardType,
+  toggleVerficationScreen,
+} from '../../../Redux/Slices/NormalSlices/AuthSlice';
+import {
+  setSharedCampaignId,
+  setUserFromCampaignLink,
+  setYlyticInstagramUserId,
+} from '../../../Redux/Slices/NormalSlices/Deeplink/DeeplinkSlice';
+import {
+  responsiveWidth,
+  responsiveFontSize,
+  responsiveHeight,
+} from 'react-native-responsive-dimensions';
 import Authenticator from '../../Components/LoginComponent/Authenticator';
 import Seprator from '../../Components/Seprator';
 import {navigate} from '../../../Navigation/RootNavigation';
@@ -60,10 +82,22 @@ const LoginHome = () => {
       setType(data?.data?.email);
       dispatcher(toggleVerficationScreen({show: 1}));
     } else if (data?.statusCode === 409) {
-      dispatch(toggleAlertModal({message: 'Account Not Connected', type: false, show: true}));
+      dispatch(
+        toggleAlertModal({
+          message: 'Account Not Connected',
+          type: false,
+          show: true,
+        }),
+      );
       signOutGoogle();
     } else {
-      dispatch(toggleAlertModal({message: 'Something Went Wrong, Please Try Again', type: false, show: true}));
+      dispatch(
+        toggleAlertModal({
+          message: 'Something Went Wrong, Please Try Again',
+          type: false,
+          show: true,
+        }),
+      );
     }
   };
 
@@ -73,16 +107,26 @@ const LoginHome = () => {
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.centeredContent}>
-          <Image source={require('../../../Assets/Images/HomeShow.png')} style={styles.image} />
+          <Image
+            source={require('../../../Assets/Images/HomeShow.png')}
+            style={styles.image}
+          />
           <View style={styles.textWrapper}>
             <Text style={styles.headingText}>Your Gateway to Earnings</Text>
-            <Text numberOfLines={2} adjustsFontSizeToFit={true} style={styles.descriptionText}>
+            <Text
+              numberOfLines={2}
+              adjustsFontSizeToFit={true}
+              style={styles.descriptionText}>
               Join Fahdu today & enjoy innovative content {'\n'}
               monetization tools and resources.
             </Text>
           </View>
 
-          <View style={[styles.buttonWrapper, Platform.OS === 'ios' ? styles.newLogin : null]}>
+          <View
+            style={[
+              styles.buttonWrapper,
+              Platform.OS === 'ios' ? styles.newLogin : null,
+            ]}>
             <Pressable
               onPressIn={() => setSocialButton(true)}
               onPressOut={() => setSocialButton(false)}
@@ -93,10 +137,22 @@ const LoginHome = () => {
 
                 setLoader(false);
               }}>
-              <View style={[styles.googleButton, socialButton && {backgroundColor: '#1e1e1e'}]}>
-                <Image source={require('../../../Assets/Images/googleIcons.png')} style={styles.icon} />
+              <View
+                style={[
+                  styles.googleButton,
+                  socialButton && {backgroundColor: '#1e1e1e'},
+                ]}>
+                <Image
+                  source={require('../../../Assets/Images/googleIcons.png')}
+                  style={styles.icon}
+                />
 
-                <Text style={[styles.buttonText, socialButton && {color: '#fff'}]}>{Platform.OS === 'android' ? 'Continue with Google' : 'Google'}</Text>
+                <Text
+                  style={[styles.buttonText, socialButton && {color: '#fff'}]}>
+                  {Platform.OS === 'android'
+                    ? 'Continue with Google'
+                    : 'Google'}
+                </Text>
               </View>
             </Pressable>
             {Platform.OS === 'ios' && (
@@ -111,9 +167,22 @@ const LoginHome = () => {
 
                   setLoader(false);
                 }}>
-                <View style={[styles.appleButton, socialButtonTwo && {backgroundColor: '#1e1e1e'}]}>
-                  <Image source={require('../../../Assets/Images/appleIcons.png')} style={[styles.icon, {width: 17}]} />
-                  <Text style={[styles.buttonText, socialButtonTwo && {color: '#fff'}]}>Apple</Text>
+                <View
+                  style={[
+                    styles.appleButton,
+                    socialButtonTwo && {backgroundColor: '#1e1e1e'},
+                  ]}>
+                  <Image
+                    source={require('../../../Assets/Images/appleIcons.png')}
+                    style={[styles.icon, {width: 17}]}
+                  />
+                  <Text
+                    style={[
+                      styles.buttonText,
+                      socialButtonTwo && {color: '#fff'},
+                    ]}>
+                    Apple
+                  </Text>
                 </View>
               </Pressable>
             )}
@@ -126,16 +195,31 @@ const LoginHome = () => {
             onPress={() => {
               navigate('LoginEmail');
             }}>
-            <View style={[styles.emailButton, loginPress === true && {backgroundColor: '#fff'}]}>
+            <View
+              style={[
+                styles.emailButton,
+                loginPress === true && {backgroundColor: '#fff'},
+              ]}>
               <Text style={styles.emailButtonText}>Login</Text>
             </View>
           </Pressable>
-          <Pressable onPressIn={() => setSignupPress(true)} onPressOut={() => setSignupPress(false)} onPress={() => navigate('SignupEmail')}>
-            <View style={[styles.signupButton, signupPress === true && {backgroundColor: '#FFA86B'}]}>
+          <Pressable
+            onPressIn={() => setSignupPress(true)}
+            onPressOut={() => setSignupPress(false)}
+            onPress={() => navigate('SignupEmail')}>
+            <View
+              style={[
+                styles.signupButton,
+                signupPress === true && {backgroundColor: '#FFA86B'},
+              ]}>
               <Text style={styles.signupButtonText}>Sign Up</Text>
             </View>
           </Pressable>
-          <Authenticator authToken={authToken} type={type} afterLoginProcess={afterLoginProcess} />
+          <Authenticator
+            authToken={authToken}
+            type={type}
+            afterLoginProcess={afterLoginProcess}
+          />
         </View>
       </ScrollView>
     </View>

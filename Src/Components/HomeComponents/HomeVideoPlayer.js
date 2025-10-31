@@ -1,31 +1,73 @@
-import {StyleSheet, Text, View, Dimensions, ImageBackground, Pressable, ActivityIndicator, Platform} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  ImageBackground,
+  Pressable,
+  ActivityIndicator,
+  Platform,
+} from 'react-native';
 import Animated, {runOnUI} from 'react-native-reanimated';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import Video from 'react-native-video';
-import {responsiveFontSize, responsiveWidth} from 'react-native-responsive-dimensions';
+import {VideoView, useVideoPlayer} from 'expo-video';
+import {
+  responsiveFontSize,
+  responsiveWidth,
+} from 'react-native-responsive-dimensions';
 import DIcon from '../../../DesiginData/DIcons';
 import ReadMore from '@fawazahmed/react-native-read-more';
 import {LoginPageErrors} from '../ErrorSnacks';
-import {useLazyGetAllCommentsQuery, useLazyIsValidFollowQuery, useLikeApiMutation} from '../../../Redux/Slices/QuerySlices/chatWindowAttachmentSliceApi';
-import {GestureHandlerRootView, TapGestureHandler, State, Gesture} from 'react-native-gesture-handler';
+import {
+  useLazyGetAllCommentsQuery,
+  useLazyIsValidFollowQuery,
+  useLikeApiMutation,
+} from '../../../Redux/Slices/QuerySlices/chatWindowAttachmentSliceApi';
+import {
+  GestureHandlerRootView,
+  TapGestureHandler,
+  State,
+  Gesture,
+} from 'react-native-gesture-handler';
 import CreateCommentBottomSheet from './CreateCommentBottomSheet';
-import {toggleCommentBottomSheet, toggleLoadingComments, toggleSendPostTipModal} from '../../../Redux/Slices/NormalSlices/HideShowSlice';
-import {savePostComments, setCurrentCommentDetails, setTotalPages} from '../../../Redux/Slices/NormalSlices/CurrentCommentSlice';
+import {
+  toggleCommentBottomSheet,
+  toggleLoadingComments,
+  toggleSendPostTipModal,
+} from '../../../Redux/Slices/NormalSlices/HideShowSlice';
+import {
+  savePostComments,
+  setCurrentCommentDetails,
+  setTotalPages,
+} from '../../../Redux/Slices/NormalSlices/CurrentCommentSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation} from '@react-navigation/native';
 import PostTipModal from './PostTipModal';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
-import {useAnimatedStyle, useSharedValue, withSpring} from 'react-native-reanimated';
+import {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import {TouchableOpacity} from '@gorhom/bottom-sheet';
 import {Image} from 'expo-image';
 
 const HomeVideoPlayer = ({route}) => {
-  const {videoUrl, coverUrl, userImage, displayName, description, count, postId, liked, role, id} = route?.params;
+  const {
+    videoUrl,
+    coverUrl,
+    userImage,
+    displayName,
+    description,
+    count,
+    postId,
+    liked,
+    role,
+    id,
+  } = route?.params;
 
   console.log('desc', description);
-
-  const videoRef = useRef(null);
 
   const currentUserId = useSelector(state => state.auth.user.currentUserId);
 
@@ -56,6 +98,49 @@ const HomeVideoPlayer = ({route}) => {
   const [getAllComments] = useLazyGetAllCommentsQuery();
 
   const doubleTapRef = useRef(null);
+
+  // Initialize Expo Video Player
+  const player = useVideoPlayer(videoUrl, player => {
+    player.loop = false;
+    player.muted = mute;
+    player.play();
+  });
+
+  // Handle play/pause state changes
+  useEffect(() => {
+    if (toPlay) {
+      player.play();
+    } else {
+      player.pause();
+    }
+  }, [toPlay]);
+
+  // Handle mute state changes
+  useEffect(() => {
+    player.muted = mute;
+  }, [mute]);
+
+  // Listen to player status for buffering state
+  useEffect(() => {
+    const subscription = player.addListener('statusChange', status => {
+      console.log('Player status:', status);
+
+      // Handle buffering
+      if (status === 'loading' || status === 'readyToPlay') {
+        setBuffering(status === 'loading');
+      }
+
+      // Handle errors
+      if (status === 'error') {
+        console.log('Video error occurred');
+        LoginPageErrors('Error loading video');
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [player]);
 
   const onSingleTap = event => {
     if (event.nativeEvent.state === State.ACTIVE) {
@@ -92,8 +177,28 @@ const HomeVideoPlayer = ({route}) => {
 
   const Mute = useCallback(() => {
     return (
-      <View style={{height: responsiveWidth(7), width: responsiveWidth(7), borderRadius: responsiveWidth(20), backgroundColor: '#00000060', justifyContent: 'center', alignItems: 'center'}}>
-        <Image source={mute ? require('../../../Assets/Images/mute.png') : require('../../../Assets/Images/unmute.png')} style={{height: responsiveWidth(4), width: responsiveWidth(4), resizeMode: 'contain', alignSelf: 'center'}} />
+      <View
+        style={{
+          height: responsiveWidth(7),
+          width: responsiveWidth(7),
+          borderRadius: responsiveWidth(20),
+          backgroundColor: '#00000060',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Image
+          source={
+            mute
+              ? require('../../../Assets/Images/mute.png')
+              : require('../../../Assets/Images/unmute.png')
+          }
+          style={{
+            height: responsiveWidth(4),
+            width: responsiveWidth(4),
+            resizeMode: 'contain',
+            alignSelf: 'center',
+          }}
+        />
       </View>
     );
   }, [mute]);
@@ -128,10 +233,6 @@ const HomeVideoPlayer = ({route}) => {
     }
   };
 
-  function handleVideoError(x) {
-    console.log(x?.message);
-  }
-
   const [isValidFollow] = useLazyIsValidFollowQuery();
 
   useEffect(() => {
@@ -161,56 +262,65 @@ const HomeVideoPlayer = ({route}) => {
   return (
     <TapGestureHandler
       onHandlerStateChange={onSingleTap}
-      waitFor={doubleTapRef} // Wait for double tap to avoid conflicts
-      shouldCancelWhenOutside={false} // Important: allows buttons inside to work
+      waitFor={doubleTapRef}
+      shouldCancelWhenOutside={false}
       enabled={!childPressed}>
       <View style={styles.container} pointerEvents="box-none">
         <View source={{uri: coverUrl}} style={styles.videoContainer}>
-          <Image blurRadius={50} source={{uri: coverUrl}} style={{position: 'absolute', left: 0, right: 0, top: 0, bottom: 0, width: '100%', height: '100%', opacity: 0.5}} />
-
-          <Video
-            paused={!toPlay}
-            ref={videoRef}
-            // onProgress={(x) => (currentDurationRef.current = x.currentTime)}
-            source={{uri: videoUrl}}
-            style={styles.video}
-            resizeMode="cover"
-            onError={handleVideoError}
-            repeat={false}
-            playInBackground={false}
-            playWhenInactive={false}
-            ignoreSilentSwitch={'ignore'}
-            // onBuffer={b => setBuffering(b.isBuffering)}
-            onBuffer={({isBuffering}) => setBuffering(isBuffering)}
-            onLoadStart={() => setBuffering(true)} // ensures loader shows on start
-            onLoad={() => setBuffering(false)}
-            posterResizeMode="cover"
-            poster={coverUrl}
-            muted={mute}
+          <Image
+            blurRadius={50}
+            source={{uri: coverUrl}}
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              width: '100%',
+              height: '100%',
+              opacity: 0.5,
+            }}
           />
 
-          {/* <View style={styles.allButton} onPress={() => console.log('helloo')} /> */}
+          <VideoView
+            player={player}
+            style={styles.video}
+            contentFit="cover"
+            nativeControls={false}
+          />
 
-          <View style={[styles.overLayContainer]} onPress={() => setToPlay(!toPlay)}>
-            {/* <TapGestureHandler cancelsTouchesInView onHandlerStateChange={_onSingleTap} waitFor={doubleTapRef}>
-            <TapGestureHandler ref={doubleTapRef} onHandlerStateChange={_onDoubleTap} numberOfTaps={2}>
-              <View style={{backgroundColor: 'transparent', width: '100%', height: '100%', position: 'relative', alignSelf: 'center', top: '10%'}} />
-            </TapGestureHandler>
-          </TapGestureHandler> */}
-
-            {/* <Animated.Image source={require('../../../Assets/Images/heart.png')} style={animatedStyles} /> */}
-
+          <View
+            style={[styles.overLayContainer]}
+            onPress={() => setToPlay(!toPlay)}>
             <View style={styles.bottomIntractionContainer}>
               <View style={{height: responsiveWidth(30)}} />
               <View style={styles.postDescriptionContainer}>
                 <View style={styles.headerLeftWrapper}>
                   <View style={styles.headerLeftContentContainer}>
-                    <Pressable style={[styles.profileImageContainer, {borderColor: 'white', borderWidth: 1}]} onPress={() => handleGoToOthersProfile()}>
-                      <Image placeholder={require('../../../Assets/Images/DefaultProfile.jpg')} source={userImage} resizeMethod="resize" style={styles.profileImage} />
+                    <Pressable
+                      style={[
+                        styles.profileImageContainer,
+                        {borderColor: 'white', borderWidth: 1},
+                      ]}
+                      onPress={() => handleGoToOthersProfile()}>
+                      <Image
+                        placeholder={require('../../../Assets/Images/DefaultProfile.jpg')}
+                        source={userImage}
+                        resizeMethod="resize"
+                        style={styles.profileImage}
+                      />
                     </Pressable>
 
-                    <Pressable style={styles.headerInformation} onPress={() => handleGoToOthersProfile()}>
-                      <Text style={[styles.userName, {color: '#fff', maxWidth: responsiveWidth(40)}]} numberOfLines={1} ellipsizeMode="tail">
+                    <Pressable
+                      style={styles.headerInformation}
+                      onPress={() => handleGoToOthersProfile()}>
+                      <Text
+                        style={[
+                          styles.userName,
+                          {color: '#fff', maxWidth: responsiveWidth(40)},
+                        ]}
+                        numberOfLines={1}
+                        ellipsizeMode="tail">
                         {displayName}
                       </Text>
 
@@ -227,37 +337,95 @@ const HomeVideoPlayer = ({route}) => {
                               id,
                             });
                           }}>
-                          <Text style={[styles.userName, {color: 'white', fontFamily: 'Rubik-Medium'}]}>Subscribe</Text>
+                          <Text
+                            style={[
+                              styles.userName,
+                              {color: 'white', fontFamily: 'Rubik-Medium'},
+                            ]}>
+                            Subscribe
+                          </Text>
                         </Pressable>
                       )}
                     </Pressable>
                   </View>
                 </View>
 
-                <ReadMore animate numberOfLines={2} style={styles.bioText} seeMoreStyle={styles.seeMoreLess} seeLessStyle={styles.seeMoreLess}>
+                <ReadMore
+                  animate
+                  numberOfLines={2}
+                  style={styles.bioText}
+                  seeMoreStyle={styles.seeMoreLess}
+                  seeLessStyle={styles.seeMoreLess}>
                   {description}
                 </ReadMore>
               </View>
 
               <View style={styles.postInteraction}>
-                <Pressable style={styles.interactorContainer} onPressIn={() => setChildPressed(true)} onPressOut={() => setChildPressed(false)} onPress={sendLike}>
-                  <DIcon color={hasLiked ? '#ff6961' : '#fff'} provider={'AntDesign'} name={'heart'} size={responsiveWidth(7)} />
+                <Pressable
+                  style={styles.interactorContainer}
+                  onPressIn={() => setChildPressed(true)}
+                  onPressOut={() => setChildPressed(false)}
+                  onPress={sendLike}>
+                  <DIcon
+                    color={hasLiked ? '#ff6961' : '#fff'}
+                    provider={'AntDesign'}
+                    name={'heart'}
+                    size={responsiveWidth(7)}
+                  />
                   <Text style={styles.interactorText}>{like}</Text>
                 </Pressable>
 
-                <Pressable onPress={() => handleOpenCommentSheet(postId, false)} onPressIn={() => setChildPressed(true)} onPressOut={() => setChildPressed(false)} style={styles.interactorContainer}>
-                  <DIcon color={'#fff'} provider={'Ionicons'} name={'chatbubble-sharp'} size={responsiveWidth(7.5)} />
+                <Pressable
+                  onPress={() => handleOpenCommentSheet(postId, false)}
+                  onPressIn={() => setChildPressed(true)}
+                  onPressOut={() => setChildPressed(false)}
+                  style={styles.interactorContainer}>
+                  <DIcon
+                    color={'#fff'}
+                    provider={'Ionicons'}
+                    name={'chatbubble-sharp'}
+                    size={responsiveWidth(7.5)}
+                  />
                   <Text style={styles.interactorText}>{count?.comments}</Text>
                 </Pressable>
 
                 {id !== currentUserId && (
-                  <Pressable style={styles.interactorContainer} onPressIn={() => setChildPressed(true)} onPressOut={() => setChildPressed(false)} onPress={() => dispatch(toggleSendPostTipModal({info: {show: true, postId}}))}>
-                    <Image source={require('../../../Assets/Images/Coin.png')} style={{height: responsiveWidth(7), width: responsiveWidth(7), resizeMode: 'contain', alignSelf: 'center'}} />
-                    <Text style={[styles.interactorText, {fontFamily: 'Rubik-Bold'}]}>Tip</Text>
+                  <Pressable
+                    style={styles.interactorContainer}
+                    onPressIn={() => setChildPressed(true)}
+                    onPressOut={() => setChildPressed(false)}
+                    onPress={() =>
+                      dispatch(
+                        toggleSendPostTipModal({info: {show: true, postId}}),
+                      )
+                    }>
+                    <Image
+                      source={require('../../../Assets/Images/Coin.png')}
+                      style={{
+                        height: responsiveWidth(7),
+                        width: responsiveWidth(7),
+                        resizeMode: 'contain',
+                        alignSelf: 'center',
+                      }}
+                    />
+                    <Text
+                      style={[
+                        styles.interactorText,
+                        {fontFamily: 'Rubik-Bold'},
+                      ]}>
+                      Tip
+                    </Text>
                   </Pressable>
                 )}
 
-                <Pressable onPressIn={() => setChildPressed(true)} onPressOut={() => setChildPressed(false)} onPress={() => setMute(mute => !mute)} style={[styles.interactorContainer, {marginTop: responsiveWidth(2)}]}>
+                <Pressable
+                  onPressIn={() => setChildPressed(true)}
+                  onPressOut={() => setChildPressed(false)}
+                  onPress={() => setMute(mute => !mute)}
+                  style={[
+                    styles.interactorContainer,
+                    {marginTop: responsiveWidth(2)},
+                  ]}>
                   <Mute />
                 </Pressable>
               </View>
@@ -267,13 +435,38 @@ const HomeVideoPlayer = ({route}) => {
         <PostTipModal />
         <CreateCommentBottomSheet />
         {!toPlay && (
-          <TouchableOpacity onPressIn={() => setChildPressed(true)} onPressOut={() => setChildPressed(false)} onPress={() => setToPlay(!toPlay)} style={Platform.OS === 'android' ? styles.playPauseStyle : styles.playPauseStyleIos}>
-            {buffering ? <ActivityIndicator size={'large'} color={'white'} /> : <DIcon provider={'Ionicons'} name={'play'} size={responsiveWidth(10)} color="#fff" />}
+          <TouchableOpacity
+            onPressIn={() => setChildPressed(true)}
+            onPressOut={() => setChildPressed(false)}
+            onPress={() => setToPlay(!toPlay)}
+            style={
+              Platform.OS === 'android'
+                ? styles.playPauseStyle
+                : styles.playPauseStyleIos
+            }>
+            {buffering ? (
+              <ActivityIndicator size={'large'} color={'white'} />
+            ) : (
+              <DIcon
+                provider={'Ionicons'}
+                name={'play'}
+                size={responsiveWidth(10)}
+                color="#fff"
+              />
+            )}
           </TouchableOpacity>
         )}
 
         {buffering && toPlay && (
-          <TouchableOpacity onPressIn={() => setChildPressed(true)} onPressOut={() => setChildPressed(false)} onPress={() => setToPlay(!toPlay)} style={Platform.OS === 'android' ? styles.playPauseStyle : styles.playPauseStyleIos}>
+          <TouchableOpacity
+            onPressIn={() => setChildPressed(true)}
+            onPressOut={() => setChildPressed(false)}
+            onPress={() => setToPlay(!toPlay)}
+            style={
+              Platform.OS === 'android'
+                ? styles.playPauseStyle
+                : styles.playPauseStyleIos
+            }>
             <ActivityIndicator size={'large'} color={'white'} />
           </TouchableOpacity>
         )}
@@ -308,18 +501,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     display: 'flex',
-    // backgroundColor: "red",
   },
   bottomIntractionContainer: {
     marginTop: 'auto',
-    // borderWidth: 1,
     minHeight: responsiveWidth(30),
     flexDirection: 'row',
   },
   postInteraction: {
     height: responsiveWidth(75),
     marginTop: 'auto',
-    // borderWidth: 1,
     width: responsiveWidth(22),
     marginLeft: 'auto',
     flexDirection: 'column',
@@ -337,7 +527,6 @@ const styles = StyleSheet.create({
   },
 
   postDescriptionContainer: {
-    // borderWidth: 1,
     width: responsiveWidth(75),
     paddingLeft: responsiveWidth(4),
     paddingRight: responsiveWidth(2),
@@ -346,7 +535,6 @@ const styles = StyleSheet.create({
   headerLeftWrapper: {
     height: responsiveWidth(12),
     justifyContent: 'center',
-    // borderWidth : 1,
   },
   headerLeftContentContainer: {
     height: '100%',

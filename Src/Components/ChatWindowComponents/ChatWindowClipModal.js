@@ -1,14 +1,35 @@
 //todo:This modal will popup when user click on clip in chatWindow Text Input
 
-import {StyleSheet, Text, View, Animated, TouchableOpacity, FlatList, PermissionsAndroid, ToastAndroid, Platform} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Animated,
+  TouchableOpacity,
+  FlatList,
+  PermissionsAndroid,
+  ToastAndroid,
+  Platform,
+} from 'react-native';
 import React, {useCallback, useState, useEffect} from 'react';
-import {responsiveFontSize, responsiveHeight, responsiveWidth} from 'react-native-responsive-dimensions';
+import {
+  responsiveFontSize,
+  responsiveHeight,
+  responsiveWidth,
+} from 'react-native-responsive-dimensions';
 import {useSelector, useDispatch, shallowEqual} from 'react-redux';
 import Modal from 'react-native-modal';
-import {toggleChatWindowClipModal, toggleChatWindowAttachmentPreviewModal, toggleAttachmentMediaLoading, toggleChatWindowPreviewSheet} from '../../../Redux/Slices/NormalSlices/HideShowSlice';
+import {
+  toggleChatWindowClipModal,
+  toggleChatWindowAttachmentPreviewModal,
+  toggleAttachmentMediaLoading,
+  toggleChatWindowPreviewSheet,
+} from '../../../Redux/Slices/NormalSlices/HideShowSlice';
 import {chatWindowAttachmentList} from '../../../DesiginData/Data';
 import DIcon from '../../../DesiginData/DIcons';
-import DocumentPicker from 'react-native-document-picker';
+
+import {pick, types, isCancel} from '@react-native-documents/picker';
+
 import {setMediaData} from '../../../Redux/Slices/NormalSlices/MessageSlices/ChatWindowPreviewDataSlice';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {generateBase64Image} from '../../../FFMPeg/FFMPegModule';
@@ -19,14 +40,22 @@ import {Image} from 'expo-image';
 
 const selectDocument = async () => {
   try {
-    const docInfo = await DocumentPicker.pickSingle({type: DocumentPicker.types.pdf, copyTo: 'cachesDirectory', allowMultiSelection: false});
+    const docInfo = await pick({
+      type: [types.pdf],
+      multiple: false,
+      copyTo: 'cachesDirectory',
+    });
+
     if (docInfo?.size > 60000000) {
-      //60MB
       ChatWindowError('PDF Size must be lower than 60 MB');
       return 0;
     }
     return docInfo;
   } catch (e) {
+    if (isCancel(e)) {
+      console.log('User cancelled document selection.');
+      return undefined;
+    }
     console.log('CWClip SelectDocument Error', e.message);
     return undefined;
   }
@@ -43,19 +72,39 @@ const selectMediaImage = async type => {
         return {didCancel: true};
       } else {
         if (mediaImageInfo?.didCancel !== true) {
-          let dePixeldPreviewBase64MediaInfo = await generateBase64Image(mediaImageInfo?.assets[0]?.uri);
+          let dePixeldPreviewBase64MediaInfo = await generateBase64Image(
+            mediaImageInfo?.assets[0]?.uri,
+          );
 
-          return {mediaImageInfo: {uri: mediaImageInfo?.assets[0].uri, name: mediaImageInfo?.assets[0].fileName, type: mediaImageInfo?.assets[0].type}, dePixeldPreviewBase64MediaInfo};
+          return {
+            mediaImageInfo: {
+              uri: mediaImageInfo?.assets[0].uri,
+              name: mediaImageInfo?.assets[0].fileName,
+              type: mediaImageInfo?.assets[0].type,
+            },
+            dePixeldPreviewBase64MediaInfo,
+          };
         } else {
           return {didCancel: true};
         }
       }
     } else {
-      const mediaImageInfo = await ImageCropPicker.openCamera({mediaType: 'photo'});
+      const mediaImageInfo = await ImageCropPicker.openCamera({
+        mediaType: 'photo',
+      });
 
-      let dePixeldPreviewBase64MediaInfo = await generateBase64Image(mediaImageInfo?.path);
+      let dePixeldPreviewBase64MediaInfo = await generateBase64Image(
+        mediaImageInfo?.path,
+      );
 
-      return {mediaImageInfo: {uri: mediaImageInfo?.path, name: makeid(6) + 'frommsgcam', type: mediaImageInfo?.mime}, dePixeldPreviewBase64MediaInfo};
+      return {
+        mediaImageInfo: {
+          uri: mediaImageInfo?.path,
+          name: makeid(6) + 'frommsgcam',
+          type: mediaImageInfo?.mime,
+        },
+        dePixeldPreviewBase64MediaInfo,
+      };
     }
   } catch (e) {
     console.log('CWClip SelectMediaImage Error', e.message);
@@ -65,9 +114,17 @@ const selectMediaImage = async type => {
 
 const selectMediaVideo = async () => {
   try {
-    const mediaVideoInfo = await launchImageLibrary({mediaType: Platform.OS === 'ios' ? 'video' : 'mixed', selectionLimit: 1, assetRepresentationMode: 'current'}); //!odo : FilesSize lagana hai
+    const mediaVideoInfo = await launchImageLibrary({
+      mediaType: Platform.OS === 'ios' ? 'video' : 'mixed',
+      selectionLimit: 1,
+      assetRepresentationMode: 'current',
+    }); //!odo : FilesSize lagana hai
 
-    if (mediaVideoInfo?.assets[0]?.type?.search('mp4') >= 0 || mediaVideoInfo?.assets[0]?.type?.search('mov') >= 0 || mediaVideoInfo?.assets[0]?.type?.search('quicktime') >= 0) {
+    if (
+      mediaVideoInfo?.assets[0]?.type?.search('mp4') >= 0 ||
+      mediaVideoInfo?.assets[0]?.type?.search('mov') >= 0 ||
+      mediaVideoInfo?.assets[0]?.type?.search('quicktime') >= 0
+    ) {
       if (mediaVideoInfo.assets[0].fileSize <= 60000000) {
         return mediaVideoInfo;
       } else {
@@ -91,7 +148,9 @@ export const afterImageClipSelected = (dispatcher, type = 'photo') => {
     if (e?.didCancel !== true) {
       console.log('🖼️ File selected');
       dispatcher(setMediaData({type: 1, mediaImageInfoSet: e}));
-      type === 'photo' ? dispatcher(toggleChatWindowClipModal()) : console.log('Was Camera 🎃');
+      type === 'photo'
+        ? dispatcher(toggleChatWindowClipModal())
+        : console.log('Was Camera 🎃');
       dispatcher(toggleChatWindowPreviewSheet({show: 1}));
       dispatcher(toggleAttachmentMediaLoading({show: false}));
     } else {
@@ -102,7 +161,9 @@ export const afterImageClipSelected = (dispatcher, type = 'photo') => {
 };
 
 const ChatWindowClipModal = () => {
-  const modalVisibility = useSelector(state => state.hideShow.visibility.chatWindowClipModal);
+  const modalVisibility = useSelector(
+    state => state.hideShow.visibility.chatWindowClipModal,
+  );
 
   const dispatcher = useDispatch();
 
@@ -166,10 +227,16 @@ const ChatWindowClipModal = () => {
           <FlatList
             data={chatWindowAttachmentList}
             renderItem={({item, index}) => (
-              <TouchableOpacity onPress={handleClipSelectedMedia.bind(null, {id: item.id})}>
+              <TouchableOpacity
+                onPress={handleClipSelectedMedia.bind(null, {id: item.id})}>
                 <View style={styles.eachSortModalList}>
                   <View style={styles.verifyContainer}>
-                    <Image cachePolicy="memory-disk" source={item.url} contentFit="contain" style={{flex: 1}} />
+                    <Image
+                      cachePolicy="memory-disk"
+                      source={item.url}
+                      contentFit="contain"
+                      style={{flex: 1}}
+                    />
                   </View>
                 </View>
               </TouchableOpacity>

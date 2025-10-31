@@ -3954,6 +3954,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sleiv/react-native-opengraph-parser@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@sleiv/react-native-opengraph-parser@npm:0.1.0"
+  dependencies:
+    html-entities: "npm:^2.4.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/e51ae7f118b334b10f79f305af4723a90ef1f48d54d5695300330190fc82a0dadd26ad8af31f27b2f2bdfd72946cbaba6fe327608d82d0b50f4c2f9fda97fe6c
+  languageName: node
+  linkType: hard
+
 "@socket.io/component-emitter@npm:~3.1.0":
   version: 3.1.2
   resolution: "@socket.io/component-emitter@npm:3.1.2"
@@ -4561,6 +4573,7 @@ __metadata:
     "@reduxjs/toolkit": "npm:^2.9.2"
     "@sayem314/react-native-keep-awake": "npm:^1.3.1"
     "@shopify/flash-list": "npm:^1.7.1"
+    "@sleiv/react-native-opengraph-parser": "npm:^0.1.0"
     "@types/jest": "npm:^29.5.13"
     "@types/react": "npm:^19.0.0"
     "@types/react-native-base64": "npm:^0"
@@ -4570,15 +4583,18 @@ __metadata:
     dayjs: "npm:^1.11.18"
     eslint: "npm:^8.19.0"
     expo: "npm:~53.0.0"
+    expo-av: "npm:~15.1.7"
     expo-blur: "npm:^15.0.7"
     expo-image: "npm:^3.0.10"
     expo-status-bar: "npm:^3.0.8"
     expo-video: "npm:~2.2.2"
-    ffmpeg-kit-react-native: /Users/giniedigital/ltsfahdu/Fahdu/FFMPegBuild/react-native
+    ffmpeg-kit-react-native: ./FFMPegBuild/react-native
     jest: "npm:^29.6.3"
     lottie-react-native: "npm:^7.3.4"
+    moment: "npm:^2.30.1"
     prettier: "npm:2.8.8"
     react: "npm:19.0.0"
+    react-moment: "npm:^1.1.3"
     react-native: "npm:0.79.6"
     react-native-android-open-settings: "npm:^1.3.0"
     react-native-animated-dots-carousel: "npm:^2.0.0"
@@ -7127,6 +7143,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-av@npm:~15.1.7":
+  version: 15.1.7
+  resolution: "expo-av@npm:15.1.7"
+  peerDependencies:
+    expo: "*"
+    react: "*"
+    react-native: "*"
+    react-native-web: "*"
+  peerDependenciesMeta:
+    react-native-web:
+      optional: true
+  checksum: 10c0/83c70c92bab08e068e9fe2d4023c8dabc086de3d090c759842ab25701490bc639ee63557a453fe1948fccf32c768c9a4d4a52851aa90b73b948b1a99ca158882
+  languageName: node
+  linkType: hard
+
 "expo-blur@npm:^15.0.7":
   version: 15.0.7
   resolution: "expo-blur@npm:15.0.7"
@@ -7387,13 +7418,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ffmpeg-kit-react-native@file:/Users/giniedigital/ltsfahdu/Fahdu/FFMPegBuild/react-native::locator=Fahdu%40workspace%3A.":
+"ffmpeg-kit-react-native@file:./FFMPegBuild/react-native::locator=Fahdu%40workspace%3A.":
   version: 6.0.2
-  resolution: "ffmpeg-kit-react-native@file:/Users/giniedigital/ltsfahdu/Fahdu/FFMPegBuild/react-native#/Users/giniedigital/ltsfahdu/Fahdu/FFMPegBuild/react-native::hash=a401ee&locator=Fahdu%40workspace%3A."
+  resolution: "ffmpeg-kit-react-native@file:./FFMPegBuild/react-native#./FFMPegBuild/react-native::hash=e9f79f&locator=Fahdu%40workspace%3A."
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/cfbfb29b9abd9da8d7d21f64a5932734d105683e11563382dfcf51cda6689458e97e823b67a0926728771e26d7584de572ab627f66c37de892aee7ef195c8384
+  checksum: 10c0/485534a1390942c112e10a401314cc5a2e5ff19923dbe19a3d1a30228f83669b91707825866b5d8044ad3abb20a911dc9511a9fa493e93fd635631835b72ed4c
   languageName: node
   linkType: hard
 
@@ -7986,6 +8017,13 @@ __metadata:
   dependencies:
     lru-cache: "npm:^10.0.1"
   checksum: 10c0/b19dbd92d3c0b4b0f1513cf79b0fc189f54d6af2129eeb201de2e9baaa711f1936929c848b866d9c8667a0f956f34bf4f07418c12be1ee9ca74fd9246335ca1f
+  languageName: node
+  linkType: hard
+
+"html-entities@npm:^2.4.0":
+  version: 2.6.0
+  resolution: "html-entities@npm:2.6.0"
+  checksum: 10c0/7c8b15d9ea0cd00dc9279f61bab002ba6ca8a7a0f3c36ed2db3530a67a9621c017830d1d2c1c65beb9b8e3436ea663e9cf8b230472e0e413359399413b27c8b7
   languageName: node
   linkType: hard
 
@@ -10094,6 +10132,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"moment@npm:^2.30.1":
+  version: 2.30.1
+  resolution: "moment@npm:2.30.1"
+  checksum: 10c0/865e4279418c6de666fca7786607705fd0189d8a7b7624e2e56be99290ac846f90878a6f602e34b4e0455c549b85385b1baf9966845962b313699e7cb847543a
+  languageName: node
+  linkType: hard
+
 "ms@npm:2.0.0":
   version: 2.0.0
   resolution: "ms@npm:2.0.0"
@@ -11098,6 +11143,17 @@ __metadata:
   version: 19.2.0
   resolution: "react-is@npm:19.2.0"
   checksum: 10c0/a63cb346aeced8ac0e671b0f9b33720d2906de02a066ca067075d871a5d4c64cdb328f495baf9b5842d5868c0d5edd1ce18465a7358b52f4b6aa983479c9bfa2
+  languageName: node
+  linkType: hard
+
+"react-moment@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "react-moment@npm:1.1.3"
+  peerDependencies:
+    moment: ^2.29.0
+    prop-types: ^15.7.0
+    react: ^16.0 || ^17.0.0 || ^18.0.0
+  checksum: 10c0/e2e2e262c516ce3c5bb8d56c04b6ab634e78b9ef1a38c0c1822eff060bbdf76fe22c64877e7429acb0c8b0d254ac3323ce7a2b6ba6b50d3114aba897613abcf8
   languageName: node
   linkType: hard
 
