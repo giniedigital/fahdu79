@@ -7481,11 +7481,11 @@ __metadata:
 
 "ffmpeg-kit-react-native@file:./FFMPegBuild/react-native::locator=Fahdu%40workspace%3A.":
   version: 6.0.2
-  resolution: "ffmpeg-kit-react-native@file:./FFMPegBuild/react-native#./FFMPegBuild/react-native::hash=e9f79f&locator=Fahdu%40workspace%3A."
+  resolution: "ffmpeg-kit-react-native@file:./FFMPegBuild/react-native#./FFMPegBuild/react-native::hash=ebe33a&locator=Fahdu%40workspace%3A."
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/485534a1390942c112e10a401314cc5a2e5ff19923dbe19a3d1a30228f83669b91707825866b5d8044ad3abb20a911dc9511a9fa493e93fd635631835b72ed4c
+  checksum: 10c0/99942b5032c525113f15bde00f5ab15c514f2c30986874a8958437b9069f927df26eb4fe09d273a34f3d32f907c4e8363ab5d584cb8286ebd1bfab65c1772e42
   languageName: node
   linkType: hard
 

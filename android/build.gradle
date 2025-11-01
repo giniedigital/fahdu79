@@ -12,8 +12,12 @@ buildscript {
         mavenCentral()
         // Add this for ffmpeg-kit-react-native
         flatDir {
-            dirs "../node_modules/ffmpeg-kit-react-native/android/libs"
+            dirs 'libs'
         }
+
+        
+        
+        
     }
     dependencies {
         classpath("com.android.tools.build:gradle")

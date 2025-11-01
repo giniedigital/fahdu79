@@ -120,10 +120,6 @@ repositories {
 dependencies {
   api 'com.facebook.react:react-native:+'
   
-  // Use flatDir repository reference instead of direct file dependency
-  // api(name: 'ffmpeg-kit-release', ext: 'aar')
-    
-  // Extract and use the AAR contents as a transitive dependency
-  compileOnly fileTree(dir: 'libs', include: ['*.aar'])
-  api fileTree(dir: 'libs', include: ['*.jar'])
+  // CHANGED: Use compileOnly for both AAR and JAR files
+  compileOnly fileTree(dir: 'libs', include: ['*.aar', '*.jar'])
 }

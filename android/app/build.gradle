@@ -112,9 +112,28 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+
+
+
+        // The library module
+        implementation project(':ffmpeg-kit-react-native')
+        implementation(name: 'ffmpeg-kit-release', ext: 'aar')
+
+
+    
+    // Provide the actual AAR and JARs at runtime
+    implementation files('libs/smart-exception-common-0.2.0.jar')
+    implementation files('libs/smart-exception-java-0.2.0.jar')
+
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
