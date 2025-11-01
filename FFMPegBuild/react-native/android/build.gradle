@@ -2,6 +2,10 @@ buildscript {
   repositories {
     google()
     mavenCentral()
+     flatDir {
+    dirs 'libs'
+  }
+  
   }
 
   dependencies {
@@ -47,9 +51,11 @@ repositories {
   mavenCentral()
   google()
   
+
   flatDir {
     dirs 'libs'
   }
+  
 
   def found = false
   def defaultDir = null
@@ -120,6 +126,18 @@ repositories {
 dependencies {
   api 'com.facebook.react:react-native:+'
   
-  // CHANGED: Use compileOnly for both AAR and JAR files
+  // Use flatDir repository reference instead of direct file dependency
+  // api(name: 'ffmpeg-kit-release', ext: 'aar')
+    
+  // Extract and use the AAR contents as a transitive dependency
+  // compileOnly fileTree(dir: 'libs', include: ['*.aar'])
+  // api fileTree(dir: 'libs', include: ['*.jar'])
+  // implementation(name: 'ffmpeg-kit-release', ext: 'aar')
+
+    // IMPORTANT: Use compileOnly for everything in libs
   compileOnly fileTree(dir: 'libs', include: ['*.aar', '*.jar'])
+  
+  // Or separately:
+  // compileOnly(name: 'ffmpeg-kit-release', ext: 'aar')
+  // compileOnly fileTree(dir: 'libs', include: ['*.jar'])
 }
